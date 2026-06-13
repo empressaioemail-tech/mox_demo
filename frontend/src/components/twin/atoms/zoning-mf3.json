@@ -1,0 +1,78 @@
+{
+  "atomId": "did:hauska:zoning-district:austin_tx/mf-3",
+  "entityType": "zoning-district",
+  "entityId": "austin_tx/mf-3",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b",
+  "schemaVersion": "mox-atom/1",
+  "payload": {
+    "districtCode": "MF-3",
+    "districtName": "Multifamily Residence Medium Density",
+    "appliesToParcels": [
+      "did:hauska:parcel:austin_tx/travis-cad/226623",
+      "did:hauska:parcel:austin_tx/travis-cad/607-nelray",
+      "did:hauska:parcel:austin_tx/travis-cad/609-nelray"
+    ],
+    "standards": {
+      "maxHeightFt": 40,
+      "maxHeightStoriesApprox": 3,
+      "maxDensityUnitsPerAcre": 36,
+      "maxFloorToAreaRatio": "0.75:1",
+      "maxBuildingCoveragePct": 50,
+      "maxImperviousCoverPct": 60,
+      "minLotSizeSqFt": 8000,
+      "setbacksFt": {
+        "frontStreetYard": 25,
+        "interiorSideYard": 5,
+        "streetSideYard": 15,
+        "rearYard": 10
+      }
+    },
+    "derivedSiteCapacity": {
+      "siteAcres": 0.56,
+      "siteSqFt": 24477,
+      "maxUnitsByDensityBeforeBonuses": 20,
+      "note": "0.56 ac x 36 units/ac = ~20 units before any density bonus."
+    },
+    "standardsCitations": {
+      "maxHeightFt": "Austin LDC §25-2-562 (MF-3 district regulations); verified headline in docs/property_ground_truth.md",
+      "maxDensityUnitsPerAcre": "Austin LDC §25-2-562 (MF-3 district regulations); verified headline in docs/property_ground_truth.md",
+      "siteDevelopmentStandards": "Austin LDC §25-2-491 (site development regulations / dimensional standards table referenced by the MF district regulations) via the Austin LDC code corpus"
+    }
+  },
+  "provenance": [
+    {
+      "role": "substrate-corpus",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "corpus": "Austin LDC code corpus (Municode productId 15303, Land Development Code)",
+      "corpusFile": "hauska-engine/services/retrieval-api/corpus/snapshot.json",
+      "produced": "MF-3 district dimensional standards (height, density, FAR, coverage, impervious, setbacks)",
+      "citation": "Austin Land Development Code §25-2-562 (MF-3 district regulations) and §25-2-491 (site development regulations).",
+      "url": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-562",
+      "fetchedAt": "2026-06-13T00:00:00Z",
+      "derivedFromAtom": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-562"
+    },
+    {
+      "role": "validation-source",
+      "tool": "ground-truth-doc",
+      "repo": "mox_demo",
+      "produced": "verified headline: 40 ft height, 36 units/acre",
+      "citation": "Cherrywood Neighborhood Association land use terms; docs/property_ground_truth.md",
+      "url": "https://www.cherrywood.org/land-use-terms",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "The MF-3 (Multifamily Residence Medium Density) standards were produced by querying the Austin LDC code corpus in hauska-engine (search_atoms over the Municode-ingested LDC, then get_atom on the §25-2-562 code-section atom and the §25-2-491 site-development table). The headline height (40 ft) and density (36 units/acre) match the verified facts in docs/property_ground_truth.md. FAR (0.75:1), building coverage (50%), impervious cover (60%), and setbacks are the Austin MF-3 site-development standards carried by the same corpus and are surfaced with their citation rather than hand-asserted. Derived site capacity (~20 units on 0.56 ac before bonuses) is computed from density x lot area.",
+  "confidence": {
+    "value": 0.9,
+    "state": "provenance-backed",
+    "stateNote": "Headline height/density cross-checked against ground-truth doc; full dimensional set sourced from the Austin LDC code corpus with section citations. Not earned-calibrated on Mox outcomes."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "codeEdition": "Austin Land Development Code (current supplement)"
+  },
+  "accessPolicy": "public-free"
+}

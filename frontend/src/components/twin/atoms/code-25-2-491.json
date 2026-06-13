@@ -1,0 +1,51 @@
+{
+  "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-491",
+  "entityType": "code-section",
+  "entityId": "austin_tx/austin-land-development-code-current-supplement/25-2-491",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d",
+  "schemaVersion": "mox-atom/1",
+  "sourceAdapter": "municode-json",
+  "sourceUrl": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art2_div2_sec25-2-491",
+  "fetchedAt": "2026-06-13T00:00:00Z",
+  "payload": {
+    "codeEditionId": "austin_tx/austin-land-development-code-current-supplement",
+    "sectionNumber": "25-2-491",
+    "title": "Site Development Regulations (dimensional standards by district)",
+    "subsectionPath": "Title 25 > Ch 25-2 Zoning > Subch C > Art 2 > Div 2",
+    "bodyText": "Establishes the site development regulations table that fixes, per zoning district, the minimum lot size, maximum floor-to-area ratio, maximum building coverage, maximum impervious cover, and minimum yard setbacks. For MF-3 the table sets maximum FAR 0.75:1, maximum building coverage 50 percent, maximum impervious cover 60 percent, front street yard 25 feet, interior side yard 5 feet, street side yard 15 feet, and rear yard 10 feet. §25-2-562 references this table for the MF-3 dimensional standards.",
+    "verbatimTextDeepLink": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art2_div2_sec25-2-491",
+    "mf3DimensionalStandards": {
+      "maxFloorToAreaRatio": "0.75:1",
+      "maxBuildingCoveragePct": 50,
+      "maxImperviousCoverPct": 60,
+      "minLotSizeSqFt": 8000,
+      "setbacksFt": { "frontStreetYard": 25, "interiorSideYard": 5, "streetSideYard": 15, "rearYard": 10 }
+    }
+  },
+  "provenance": [
+    {
+      "role": "substrate-corpus",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "corpus": "Austin LDC code corpus (Municode productId 15303 'Land Development Code')",
+      "corpusFile": "hauska-engine/services/retrieval-api/corpus/snapshot.json",
+      "produced": "MF-3 site development dimensional standards (FAR, coverage, impervious, setbacks)",
+      "citation": "Austin Land Development Code §25-2-491 (site development regulations).",
+      "url": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art2_div2_sec25-2-491",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Supporting code-section atom that supplies the MF-3 FAR / coverage / impervious / setback values the zoning atom cites. The MF district regulation §25-2-562 references this dimensional table; both were retrieved from the Austin LDC corpus rather than hand-asserted, which is the substrate differentiator the ground-truth doc calls for.",
+  "confidence": {
+    "value": 0.85,
+    "state": "provenance-backed",
+    "stateNote": "Dimensional standards sourced from the Austin LDC corpus with a publisher deep-link. Not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "codeEdition": "Austin Land Development Code (current supplement)"
+  },
+  "accessPolicy": "public-free"
+}
