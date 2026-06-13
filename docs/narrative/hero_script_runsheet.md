@@ -11,33 +11,55 @@
 > `docs/narrative/differentiation.md`. Confidence-state rules:
 > `frontend/src/components/library/ConfidenceChip.tsx`.
 >
-> **RECONCILED 2026-06-13 (final WS-7 audit).** The assembly columns below have been
-> updated to the *actual* live engine output (POST /api/intent, X-Hauska-Key:
-> mox-tenant-key, providerMode mock). Two structural facts the original draft got
-> wrong, now corrected throughout: (a) the **Yardi intelligence layer is its own
-> surface** (`/yardi`), NOT a component the engine assembles — the engine never
-> returns a "Yardi" component, so "ride over a Yardi screen" is a *staging* note for
-> the presenter, not an assembly fact; (b) the engine **always appends a
-> `provenance-drill`** component, and surfaces the entitlement flag via
+> **RECONCILED 2026-06-13 (final WS-7 audit) · RE-RECONCILED 2026-06-13 (asset-twin
+> pass).** The assembly columns below are the *actual* live engine output (POST
+> /api/intent, X-Hauska-Key: mox-tenant-key, providerMode mock, 14 atoms — re-verified
+> this pass, all five intents return the components shown). Structural facts the
+> original draft got wrong, now corrected throughout: (a) the **Yardi intelligence
+> layer is its own surface** (`/yardi`), NOT a component the engine assembles — the
+> engine never returns a "Yardi" component, so "ride over a Yardi screen" is a
+> *staging* note for the presenter, not an assembly fact; (b) the engine **always
+> appends a `provenance-drill`** component, and surfaces the entitlement flag via
 > **`plan-review-findings` + `action-inbox`**, not a `variance-anomaly-card`, on the
-> deal/why-flagged intents. Component names in the catalog are confirmed against
+> deal/why-flagged intents. Component names confirmed against
 > `frontend/src/lib/engine.ts` `ComponentKind`.
+>
+> **Asset-twin pass updates:** (1) the guardrail-5 open-line gap is RESOLVED — the
+> verbatim `OPENING_FRAMING_LINE` now renders via `<NarrativeFrame variant="open" />`
+> on the Yardi open beat (`frontend/src/app/yardi/page.tsx:29`) and the home hub
+> (`frontend/src/app/page.tsx:49`). (2) The **spatial twin is now a real surface at
+> `/twin`** (`frontend/src/app/twin/` + `frontend/src/components/twin/`), built on the
+> operator's real building assets with the live APS SVF2 viewer staged as a labeled
+> drop-in slot pending Autodesk entitlement. (3) The **"open a unit" beat now maps to
+> the `/twin` unit drill-down** (room chips load plan + interior elevation + the
+> composed atom panel), in addition to the engine's `unit-twin-viewer` assembly. The
+> engine intent assembly is unchanged.
 
-## The arc (four narrative beats, one operating system)
+## The arc (five beats, one operating system)
 
-The demo moves through four positions. The five hero intents below sit on this arc:
+The demo moves through five beats on one arc:
+**opens on Yardi (kill the rip-and-replace fear) → spatial twin → adaptive command →
+investor room.** The five hero intents sit on this arc:
 
 1. **Open on Yardi** — untouched, intelligence layer riding on top. Kills the
-   rip-and-replace fear before anything else happens.
-2. **Spatial twin** — pull back to the proposed building, the real model; units are
-   atoms, ground truth sits above them.
+   rip-and-replace fear before anything else happens. The verbatim opening framing
+   line renders here (`<NarrativeFrame variant="open" />`).
+2. **Spatial twin (`/twin`)** — pull back to the proposed building, the real model
+   rendered from the operator's Revit assets; units are atoms, ground truth (parcel /
+   zoning / code / flood) sits above them, the MF-3 entitlement finding is reachable
+   from the building level. The live APS 3D viewer is a labeled drop-in slot pending
+   Autodesk entitlement; the asset-based twin is the active spatial face.
 3. **Command surface** — the adaptive intent bar assembling views on demand; the
    deposit loop turning.
 4. **Investor room** — the generated, cited artifact that de-risks the deal and
    lands the "more investors" thesis.
 
-Say the **opening framing line verbatim** before intent 1. Say the **closing copy**
-after intent 5. (Both in `framing.md`.)
+The five hero intents ("show me this deal", "vet the proposed building", "why is this
+flagged", "open a unit", "generate the LP view") are the typed entry points across
+these beats.
+
+Say the **opening framing line verbatim** before intent 1 (it is also rendered on the
+Yardi/home open beat). Say the **closing copy** after intent 5. (Both in `framing.md`.)
 
 ## Component catalog (target — reconcile in audit)
 
@@ -86,7 +108,10 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
 
 ### Intent 2 — "vet the proposed building"
 - **Type:** `vet the proposed building`
-- **Beat:** Spatial twin → ground-truth layer (beat 4, building level).
+- **Beat:** Spatial twin → ground-truth layer (beat 2, building level). On `/twin`
+  this is the **Building view**: the renderings/elevations hero, the labeled APS
+  drop-in slot, the floor plans, the ground-truth layer, and the MF-3 entitlement
+  finding (`frontend/src/components/twin/BuildingView.tsx` + `EntitlementFinding.tsx`).
 - **Actual assembly (verified live):** `plan-review-findings` (the MF-3 entitlement
   gap, lead) + `renderings-panel` (the proposed 5-story building) + `action-inbox`
   (the flag routed for accept/edit/reject — the deposit loop) + `provenance-drill`.
@@ -125,22 +150,33 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
 
 ### Intent 4 — "open a unit"
 - **Type:** `open a unit`
-- **Beat:** Spatial twin — unit level (beat 4, unit detail).
-- **Actual assembly (verified live):** `unit-twin-viewer` (the unit atoms — name,
-  unit type, rooms; rendered `provisional · pending APS` with a placeholder spatial
-  ref) + `renderings-panel` (the proposed building it sits in) + `provenance-drill`.
-  Each unit carries a card-level **ConfidenceChip** with state; the appended
-  provenance drill exposes source + reasoning. NOTE: the spatial ref is a labelled
-  placeholder pending the APS backfill (`renderers.tsx:369-371`) — honest about the
-  APS-blocked state, not a faked 3D view.
-- **Say:** "Every unit is an atom. Click in and you see the space, its operating
-  layer, and the ground truth stacked above it."
-- **Honesty:** Representative operating data, baseline chips. The spatial model is
-  real (the Nelray RVT). No live-Yardi unit sync implied (guardrail 6).
+- **Beat:** Spatial twin — unit level (beat 2, unit detail). **Primary surface: the
+  `/twin` unit drill-down.**
+- **Where it lands (asset-twin pass):** the natural home for this beat is the **`/twin`
+  Unit drill-down view** (`frontend/src/components/twin/UnitDrilldown.tsx`). Toggle to
+  "Unit drill-down", pick a unit type (Typical 2BR / 1BR), and the **room chips**
+  (Bed 1, Bed 2, MSTR, Kitchen, Living, Baths — names straight from the unit atom)
+  each load that room's **floor plan + interior elevation** (`assets.ts` `ROOM_IMAGES`)
+  ALONGSIDE the **composed atom panel**: spatial unit metadata + the seeded operating
+  layer (`OperatingLayer.tsx`) + the ground-truth layer (`GroundTruthLayer.tsx`).
+  Every fact carries a **ConfidenceChip** with state and a **DrillLink** to its atom.
+- **Actual engine assembly (verified live, command surface):** `unit-twin-viewer`
+  (the unit atoms — name, unit type, rooms; rendered `provisional · pending APS` with
+  a placeholder spatial ref) + `renderings-panel` (the proposed building it sits in) +
+  `provenance-drill`. Each unit carries a card-level **ConfidenceChip** with state.
+- **Honesty:** Room geometry/areas/per-room spatial refs are **provisional pending the
+  APS Model Derivative backfill (WS-1 Part A)** — stated explicitly
+  (`UnitDrilldown.tsx:176-180`); the room inventory is documented from the floor-plan
+  set. Plan/elevation imagery is curated Revit export, NOT a live 3D view. Operating
+  data is representative seed, baseline chips, tenant-private and never pooled
+  (`OperatingLayer.tsx:74-77`). No live-Yardi unit sync implied (guardrail 6).
+- **Say:** "Every unit is an atom. Click in and you walk it room by room — the space,
+  its operating layer, and the ground truth stacked above it, each fact carrying its
+  source."
 
 ### Intent 5 — "generate the LP view"
 - **Type:** `generate the LP view`
-- **Beat:** Investor room (beat 5). The close.
+- **Beat:** Investor room (beat 4). The close.
 - **Actual assembly (verified live):** `investor-rollup` (the deal molecule +
   cited de-risking ledger) + `plan-review-findings` (the MF-3 finding + code
   citations + as-of date) + `renderings-panel` (hero photoreal renderings) +
@@ -186,9 +222,10 @@ screen.
 - [x] Every numeric value renders a `ConfidenceChip` with state — enforced by the
   required `state` prop (`ConfidenceChip.tsx:53`); live states are baseline /
   provenance-backed / provisional; no `earned-through-outcome`.
-- [~] Opening line before intent 1 — **FIX-NEEDED:** the verbatim `OPENING_FRAMING_LINE`
-  is not yet mounted on the Yardi open beat (see `honesty_audit_checklist.md`
-  FIX-NEEDED #1). Closing copy after intent 5 is present (`investor/page.tsx:73-88`).
+- [x] Opening line before intent 1 — **RESOLVED:** the verbatim `OPENING_FRAMING_LINE`
+  is mounted on the Yardi open beat via `<NarrativeFrame variant="open" />`
+  (`frontend/src/app/yardi/page.tsx:29`) and on the home hub (`page.tsx:49`). Closing
+  copy after intent 5 is present (`investor/page.tsx:73-88`). Guardrail 5 clears.
 - [x] Deposit-loop moment shows the live loop, not calibrated numbers — `DepositLoop`
   + `action-inbox`/plan-review accept-edit-reject record to `/api/calibration` and
   re-run; no number flips to earned (guardrail 2).

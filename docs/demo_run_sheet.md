@@ -1,6 +1,8 @@
 # Demo run sheet and framing copy
 
-> The rehearsal doc and the demo-day script. This is the front half of WS-7: it locks the narrative and the honesty framing before the surfaces are finalized. WS-7 audits every surface against it. Builders: the confidence-chip states and the framing lines here are canonical, use them verbatim.
+> The rehearsal doc and the demo-day script. This was the front half of WS-7: it locked the narrative and the honesty framing before the surfaces were finalized.
+>
+> **CANONICAL-AUTHORITY NOTE (2026-06-13, asset-twin pass).** This doc remains canonical for the **framing lines** (Open / Transition / Close, below), the **confidence-chip rules**, the **differentiation thread**, and the **audience matching** — use those verbatim. For the **intent-by-intent component assembly and the surface-by-surface beat mapping**, the canonical source is now **`docs/narrative/hero_script_runsheet.md`**, which is reconciled cell-by-cell against the live engine output (POST /api/intent) and the built surfaces. Where the beat descriptions in this doc once diverged from what shipped, they have been reconciled below to match reality (notably: the spatial twin is the asset-based `/twin` surface with the live APS 3D viewer staged as a labeled drop-in slot — NOT a live 3D viewer rendering; and the five-beat arc is Yardi → spatial twin → adaptive command → investor room). If this doc and `hero_script_runsheet.md` ever conflict on assembly/surfaces again, `hero_script_runsheet.md` wins.
 
 ## How the demo is shaped
 
@@ -55,11 +57,28 @@ Never show a bare number. Never present a representative number as earned-calibr
 ### Transition
 - Deliver the transition line. Switch to the Nelray hero data.
 
-### Beat 4: walk the building (deal, real data)
-- Action: load the spatial twin. The APS viewer renders the proposed 5-story Nelray building. Click a unit (Bed 1, MSTR, Kitchen, etc.). The unit twin panel composes the spatial unit, a seeded operating layer, and the ground-truth layer above it (parcel, zoning, code) with provenance chips. From the building level, surface the entitlement finding.
+### Beat 4: walk the building (deal, real data) — the spatial twin at `/twin`
+- Action: load the spatial twin at **`/twin`**. **Building view** (the active surface):
+  a hero gallery of curated renderings + exterior elevations rendered from the
+  operator's real Revit model, the **labeled APS drop-in slot** ("Live 3D model —
+  wiring on APS activation"), building-level floor plans, the composed ground-truth
+  layer (parcel / zoning / code / flood, each fact chipped + drillable), and the
+  **MF-3 entitlement finding reachable from the building level**. Then switch to
+  **Unit drill-down** ("vet the proposed building" → "open a unit"): pick a unit type,
+  click a **room chip** (Bed 1, MSTR, Kitchen, etc.) — its **floor plan + interior
+  elevation** load alongside the composed atom panel (spatial unit metadata + seeded
+  operating layer + ground-truth layer), every fact with a provenance chip.
 - Say: "This is the proposed building, the real model. Every unit is an atom. Above it sits the parcel and the code, the ground truth we bring that you could never build yourself." Then the finding: "and here is what the system caught. This is a five-story building on MF-3 land, which caps at forty feet and thirty-six units an acre. It needs a rezoning to MF-4 or a variance, flagged before you ever submit."
 - Answers: the digital twin Miguel asked for, and the property-intelligence differentiator.
-- Honesty: representative data; the entitlement finding carries a code citation and an as-of date; chip baseline. Verify the MF-4 height and variance path through the substrate before showing.
+- Honesty (RECONCILED — important): the spatial face is the **asset-based twin
+  (renderings / elevations / plans)**; the live APS SVF2 3D viewer is BLOCKED on an
+  Autodesk account-level entitlement (AUTH-001) and is staged as a **labeled drop-in
+  slot**, NOT a live 3D render — do not present the slot as a working 3D viewer. The
+  building atom and per-room geometry are **provisional pending APS extraction (WS-1
+  Part A)**, stated on-surface. Representative data; the entitlement finding carries
+  the §25-2-562 code citation and an as-of date (2026-06-13); chip baseline. Verify
+  the MF-4 (§25-2-564, 60 ft) height and variance path through the substrate before
+  showing.
 
 ### Beat 5: generate the LP view (deal, real data)
 - Action: type "generate the LP view for this deal." The investor room assembles: hero renderings, an underwrite and return summary with a provenance chip on every number drilling to its source, the entitlement and plan-review section (the MF-3 finding plus the proposed-building review against Austin code, cited findings), and the "what an LP gets" framing.
