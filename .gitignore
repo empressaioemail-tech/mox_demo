@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.next/
+out/
+build/
+
+# Heavy local assets (RVT, renderings — see assets/README.md)
+apartment_bldg/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vercel

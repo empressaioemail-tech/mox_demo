@@ -1,0 +1,45 @@
+{
+  "atomId": "did:hauska:operating-proforma:nelray-5story",
+  "entityType": "operating-proforma",
+  "entityId": "nelray-5story",
+  "jurisdictionTenant": "mox-tenant",
+  "schemaVersion": "mox-atom/1",
+  "seeded": true,
+  "seededNote": "Seeded pro-forma operating atom for the proposed (not-yet-built) Nelray redevelopment. Numbers are representative seed values shaped like the operator's book, not actuals. Metric naming is consistent with the six existing mockups in mox_html_original/.",
+  "payload": {
+    "label": "Nelray 5-Story Underwrite (seed pro forma)",
+    "basis": "projected (ground-up redevelopment; no operating history yet)",
+    "metrics": [
+      { "key": "portfolioOccupancy", "label": "Stabilized occupancy", "value": 94.0, "unit": "%", "mockupRef": "Portfolio occupancy" },
+      { "key": "noiVsUnderwrite", "label": "NOI vs underwrite", "value": null, "unit": "%", "note": "Not yet measurable; building is proposed. Tracked once operating.", "mockupRef": "NOI vs underwrite" },
+      { "key": "projectedRentPerUnit2br", "label": "Rent — typical 2BR", "value": 1310, "unit": "$/u/mo", "mockupRef": "$/u rent" },
+      { "key": "projectedRentPerUnit1br", "label": "Rent — typical 1BR", "value": 1120, "unit": "$/u/mo", "mockupRef": "$/u rent" },
+      { "key": "rentLift", "label": "Rent lift (projected vs in-place)", "value": 215, "unit": "$/u/mo", "mockupRef": "Rent lift" },
+      { "key": "expenseLoadPerUnit", "label": "Expense load", "value": 580, "unit": "$/u/mo", "mockupRef": "Expense load" },
+      { "key": "controllableLineItems", "label": "Controllable line items vs market", "value": -19.4, "unit": "%", "mockupRef": "Controllable line items" },
+      { "key": "monthlyCloseCycle", "label": "Monthly close cycle (target)", "value": 4.2, "unit": "days", "mockupRef": "Monthly close cycle" },
+      { "key": "projectedCapRate", "label": "Going-in cap rate (underwrite)", "value": 7.4, "unit": "%", "mockupRef": "cap rate" },
+      { "key": "unitCount", "label": "Underwritten unit count", "value": 20, "unit": "units", "note": "~20 units at MF-3 density cap before bonuses; subject to the entitlement finding." }
+    ],
+    "underwriteConfidenceLabel": "Underwrite confidence: baseline (projected; not calibrated on this asset's outcomes)",
+    "linkedAssets": "did:hauska:deal:nelray-607-611"
+  },
+  "provenance": [
+    {
+      "role": "seed-source",
+      "tool": "operator-seed / mockup-naming",
+      "repo": "mox_demo",
+      "produced": "representative operating line items in mockup-consistent naming",
+      "citation": "mox_html_original/mox_04_invest (1).html and mox_01_command (1).html (NOI vs underwrite, Portfolio occupancy, Controllable line items, Monthly close cycle, Rent lift, Expense load, $/u rents, cap rate).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Seeded pro-forma operating atom so the deal molecule can compose the operating side of the two-flywheel model. The building is proposed (no operating history), so values are projected seed numbers shaped like the operator's book; the metric keys/labels mirror the existing mockups. Per the honesty guardrails the underwrite confidence is BASELINE / projected, not 'calibrated' (the mockups' 'calibrated' chip applies to the 18-asset owned book, which has earned outcomes; this new deal has none yet). As a private operating atom it is tenant-private and is never pooled into shared ground truth.",
+  "confidence": {
+    "value": 0.4,
+    "state": "baseline",
+    "stateNote": "Seed projection for a not-yet-built asset. Baseline; explicitly NOT calibrated/earned. Will earn calibration only after the asset operates and outcomes are observed."
+  },
+  "freshness": { "asOf": "2026-06-13", "fetchedAt": "2026-06-13T00:00:00Z" },
+  "accessPolicy": "tenant-private"
+}
