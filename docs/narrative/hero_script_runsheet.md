@@ -10,6 +10,18 @@
 > Canonical framing lines: `docs/narrative/framing.md`. Differentiation thread:
 > `docs/narrative/differentiation.md`. Confidence-state rules:
 > `frontend/src/components/library/ConfidenceChip.tsx`.
+>
+> **RECONCILED 2026-06-13 (final WS-7 audit).** The assembly columns below have been
+> updated to the *actual* live engine output (POST /api/intent, X-Hauska-Key:
+> mox-tenant-key, providerMode mock). Two structural facts the original draft got
+> wrong, now corrected throughout: (a) the **Yardi intelligence layer is its own
+> surface** (`/yardi`), NOT a component the engine assembles — the engine never
+> returns a "Yardi" component, so "ride over a Yardi screen" is a *staging* note for
+> the presenter, not an assembly fact; (b) the engine **always appends a
+> `provenance-drill`** component, and surfaces the entitlement flag via
+> **`plan-review-findings` + `action-inbox`**, not a `variance-anomaly-card`, on the
+> deal/why-flagged intents. Component names in the catalog are confirmed against
+> `frontend/src/lib/engine.ts` `ComponentKind`.
 
 ## The arc (four narrative beats, one operating system)
 
@@ -33,16 +45,22 @@ after intent 5. (Both in `framing.md`.)
 |---|---|
 | KPI card | A surfaced metric; every value carries a `ConfidenceChip`. |
 | Provenance drill | Expands any atom to source + reasoning chain. |
-| Variance / anomaly card | Flags an outlier with its reasoning and source. |
-| Action inbox | Triaged flags routed by role, each with recommendation + accept/edit/reject. |
-| Unit-twin viewer slot | APS viewer slot + the unit's spatial/operating/ground-truth atom stack. |
-| Plan-review findings | The entitlement finding (MF-3 cap) with code citation + as-of date. |
-| Investor rollup | Underwrite + return summary, every number drilling to source. |
-| Renderings panel | Hero photoreal renderings of the proposed building. |
+| Variance / anomaly card | Flags an outlier with its reasoning and source. Engine kind `variance-anomaly-card`. NOTE: assembled for operating-variance intents (e.g. the Yardi overlay's live intent "show me variance and anomalies in operating"); the *why-is-this-flagged* hero intent surfaces the entitlement flag via `plan-review-findings` + `action-inbox` instead. |
+| Action inbox | Triaged flags routed by role, each with recommendation + accept/edit/reject (the deposit loop). Engine kind `action-inbox`. |
+| Unit-twin viewer slot | APS viewer slot + the unit's spatial/operating/ground-truth atom stack. Engine kind `unit-twin-viewer`; units render `provisional · pending APS`. |
+| Plan-review findings | The entitlement finding (MF-3 cap) with code citation + as-of date. Engine kind `plan-review-findings`. |
+| Investor rollup | Underwrite + return summary (deal molecule), every number drilling to source. Engine kind `investor-rollup`. |
+| Renderings panel | Hero photoreal renderings of the proposed building. Engine kind `renderings-panel`. |
+| Provenance drill | Expands an atom to source + reasoning chain. Engine kind `provenance-drill` — the engine APPENDS this to every assembly. |
+
+Confirmed engine `ComponentKind` set (`frontend/src/lib/engine.ts:22-30`):
+`kpi-card`, `provenance-drill`, `variance-anomaly-card`, `action-inbox`,
+`unit-twin-viewer`, `plan-review-findings`, `investor-rollup`, `renderings-panel`.
 
 Every numeric value rendered by any of these composes `ConfidenceChip` with an
-explicit state (guardrail 1). In this demo the state is `baseline` /
-`provenance-backed`.
+explicit state (guardrail 1). In this demo the live states are `baseline` /
+`provenance-backed` / `provisional` (the latter collapses to `baseline` in the UI,
+never upgraded). No value renders `earned-through-outcome` (verified live).
 
 ---
 
@@ -51,23 +69,32 @@ explicit state (guardrail 1). In this demo the state is `baseline` /
 ### Intent 1 — "show me this deal"
 - **Type:** `show me this deal`
 - **Beat:** Open on Yardi (beat 1). This is the first thing the room sees.
-- **Expected assembly:** A deal-overview view. **KPI card** cluster (asking price,
-  land area, lots, zoning headline) each with a **ConfidenceChip** (`baseline`),
-  riding as the intelligence layer over a Yardi screen
-  (`Yardi_Property-Operations` / `Yardi_Financial-Overview`). One in-context
-  insight surfaced via a **provenance drill**.
-- **Say:** "This is your Yardi. Untouched. Watch what our layer adds." Then the deal
-  at a glance.
-- **Honesty:** The overlay is atom-derived, not DOM scraping (guardrail 4). No
-  write-back implied (guardrail 6). Chips baseline.
+- **Actual assembly (verified live):** `investor-rollup` (the deal molecule — address,
+  list price, site, the cited de-risking ledger) + `kpi-card` (the underwrite
+  headline metrics) + `plan-review-findings` (the MF-3 entitlement flag) +
+  `provenance-drill`. Each value carries a **ConfidenceChip** with state (live states
+  baseline / provenance-backed / provisional). NOTE (corrected): the engine does NOT
+  return a "Yardi" component — the Yardi intelligence layer is the separate `/yardi`
+  surface. To open *on Yardi*, the presenter stages the `/yardi` surface first (which
+  itself hydrates atom-derived insights from the engine), THEN runs this command
+  intent to pull back to the deal at a glance.
+- **Say:** "This is your Yardi. Untouched. Watch what our layer adds." (on the `/yardi`
+  surface) → then "show me this deal" → the deal molecule, the underwrite, and the
+  entitlement flag, every number with its provenance.
+- **Honesty:** The Yardi overlay is atom-derived, not DOM scraping (guardrail 4). No
+  write-back implied (guardrail 6). Chips carry state; nothing earned-calibrated.
 
 ### Intent 2 — "vet the proposed building"
 - **Type:** `vet the proposed building`
 - **Beat:** Spatial twin → ground-truth layer (beat 4, building level).
-- **Expected assembly:** **Unit-twin viewer slot** loads the proposed 5-story
-  Nelray model. Above the building sits the ground-truth atom stack (parcel,
-  zoning, code) each with a **provenance drill** and a **ConfidenceChip**. This
-  intent surfaces the **plan-review findings** card: the MF-3 entitlement gap.
+- **Actual assembly (verified live):** `plan-review-findings` (the MF-3 entitlement
+  gap, lead) + `renderings-panel` (the proposed 5-story building) + `action-inbox`
+  (the flag routed for accept/edit/reject — the deposit loop) + `provenance-drill`.
+  NOTE (corrected): this intent does NOT return `unit-twin-viewer` (that is intent 4,
+  "open a unit"); it leads with the plan-review finding and the renderings of the
+  proposed building. Ground-truth atoms (parcel/zoning/code) surface as the cited
+  members behind the finding's code citations + the appended provenance drill, each
+  with a **ConfidenceChip** carrying state.
 - **Say:** "This is the proposed building, the real model. Above it sits the parcel
   and the code — the ground truth we bring that you could never build yourself.
   And here is what the system caught: a five-story building on MF-3 land, which
@@ -81,10 +108,15 @@ explicit state (guardrail 1). In this demo the state is `baseline` /
 - **Type:** `why is this flagged`
 - **Beat:** Command surface — the drill (sits across beat 2 the leak, and beat 4
   the entitlement flag; same primitive either context).
-- **Expected assembly:** **Variance / anomaly card** assembles for the flagged
-  item, with the reasoning chain and the **provenance drill** to source. In the
-  operating context this is the R&M / water-leak anomaly; in the deal context it
-  drills the entitlement flag from intent 2.
+- **Actual assembly (verified live):** `plan-review-findings` (the entitlement flag
+  with its full reasoning text, MF-3 standard vs proposed, and code citations) +
+  `provenance-drill` (source + reasoning chain) + `action-inbox` (accept/edit/reject
+  — the deposit loop). NOTE (corrected): in the deal/entitlement context the engine
+  surfaces the flag via `plan-review-findings` + `action-inbox`, NOT a
+  `variance-anomaly-card`. The `variance-anomaly-card` is the *operating* primitive,
+  reached via the Yardi overlay's live intent "show me variance and anomalies in
+  operating" (`frontend/src/components/yardi/beats.ts`) — that is where the
+  R&M / water-leak anomaly assembles.
 - **Say (operating):** Tell the water-leak story (water ran high for months, a human
   finally caught an off-site underground leak), then: "the system would have
   flagged that in month one, not month nine."
@@ -94,10 +126,13 @@ explicit state (guardrail 1). In this demo the state is `baseline` /
 ### Intent 4 — "open a unit"
 - **Type:** `open a unit`
 - **Beat:** Spatial twin — unit level (beat 4, unit detail).
-- **Expected assembly:** **Unit-twin viewer slot** focuses a single unit (Bed 1,
-  MSTR, Kitchen, etc. from the floor plans). The unit-twin panel composes the
-  spatial unit + a seeded operating layer + the ground-truth layer above, each atom
-  with a **ConfidenceChip** and **provenance drill**.
+- **Actual assembly (verified live):** `unit-twin-viewer` (the unit atoms — name,
+  unit type, rooms; rendered `provisional · pending APS` with a placeholder spatial
+  ref) + `renderings-panel` (the proposed building it sits in) + `provenance-drill`.
+  Each unit carries a card-level **ConfidenceChip** with state; the appended
+  provenance drill exposes source + reasoning. NOTE: the spatial ref is a labelled
+  placeholder pending the APS backfill (`renderers.tsx:369-371`) — honest about the
+  APS-blocked state, not a faked 3D view.
 - **Say:** "Every unit is an atom. Click in and you see the space, its operating
   layer, and the ground truth stacked above it."
 - **Honesty:** Representative operating data, baseline chips. The spatial model is
@@ -106,12 +141,15 @@ explicit state (guardrail 1). In this demo the state is `baseline` /
 ### Intent 5 — "generate the LP view"
 - **Type:** `generate the LP view`
 - **Beat:** Investor room (beat 5). The close.
-- **Expected assembly:** The investor room assembles as a **generated, cited
-  artifact**: **Renderings panel** (hero photoreal renderings) + **Investor
-  rollup** (underwrite + return summary, every number with a **provenance drill**
-  and a **ConfidenceChip**) + the **plan-review findings** section (the MF-3
-  finding + proposed-building review against Austin code, cited) + the "what an LP
-  gets" framing.
+- **Actual assembly (verified live):** `investor-rollup` (the deal molecule +
+  cited de-risking ledger) + `plan-review-findings` (the MF-3 finding + code
+  citations + as-of date) + `renderings-panel` (hero photoreal renderings) +
+  `kpi-card` (the underwrite / return summary) + `provenance-drill`. The
+  `/investor` page composes these in its own display order (rollup → renderings →
+  underwrite → plan review → close frame); every number carries a **ConfidenceChip**
+  with state and a **DrillLink** to its source atom. This matches the catalog
+  (Renderings panel + Investor rollup + Plan-review findings) exactly; the engine
+  additionally returns the underwrite as a `kpi-card` and appends `provenance-drill`.
 - **Say:** "This is what you hand an LP instead of a static PDF. Every number traces
   to its source. The code risk on the parcel is already vetted — jurisdictional
   diligence no other GP can show, and it is what lowers your cost of capital."
@@ -135,12 +173,25 @@ screen.
 
 ---
 
-## Reconciliation checklist (fill in the final audit)
+## Reconciliation checklist (RECONCILED 2026-06-13 — final audit)
 
-- [ ] PENDING — confirm each intent's typed string matches the built intent parser.
-- [ ] PENDING — confirm each component in the assembly column exists and is named as above (or update names).
-- [ ] PENDING — confirm every numeric value across all five intents renders a `ConfidenceChip` with state.
-- [ ] PENDING — confirm opening line present before intent 1, closing copy after intent 5.
-- [ ] PENDING — confirm deposit-loop moment shows the live loop, not calibrated numbers.
-- [ ] PENDING — confirm investor room reads as a generated cited artifact (guardrail 3).
-- [ ] PENDING — confirm no live-bidirectional-Yardi claim appears anywhere (guardrail 6).
+- [x] Each intent's typed string matches the built parser — the five `HERO_INTENTS`
+  (`frontend/src/lib/engine.ts:154-160`) match verbatim and all five return
+  components live (verified against the running engine).
+- [x] Each component in the assembly columns exists and is named per
+  `ComponentKind` — assembly columns above REWRITTEN to the actual live output.
+  Corrections logged inline: intent 1 has no "Yardi" component (separate surface);
+  intents 1-3 surface the entitlement flag via `plan-review-findings` + `action-inbox`,
+  not `variance-anomaly-card`; every assembly appends `provenance-drill`.
+- [x] Every numeric value renders a `ConfidenceChip` with state — enforced by the
+  required `state` prop (`ConfidenceChip.tsx:53`); live states are baseline /
+  provenance-backed / provisional; no `earned-through-outcome`.
+- [~] Opening line before intent 1 — **FIX-NEEDED:** the verbatim `OPENING_FRAMING_LINE`
+  is not yet mounted on the Yardi open beat (see `honesty_audit_checklist.md`
+  FIX-NEEDED #1). Closing copy after intent 5 is present (`investor/page.tsx:73-88`).
+- [x] Deposit-loop moment shows the live loop, not calibrated numbers — `DepositLoop`
+  + `action-inbox`/plan-review accept-edit-reject record to `/api/calibration` and
+  re-run; no number flips to earned (guardrail 2).
+- [x] Investor room reads as a generated, cited artifact (guardrail 3) — confirmed.
+- [x] No live-bidirectional-Yardi claim anywhere (guardrail 6) — confirmed by grep +
+  read of every surface.

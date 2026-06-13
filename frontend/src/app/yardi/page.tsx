@@ -1,3 +1,4 @@
+import { NarrativeFrame } from "@/components/library";
 import { YardiIntelligenceLayer } from "@/components/yardi/YardiIntelligenceLayer";
 
 export const metadata = {
@@ -24,6 +25,8 @@ export default function YardiPage() {
             your decisions back to your core. It never writes back into Yardi.
           </p>
         </header>
+
+        <NarrativeFrame variant="open" />
 
         <YardiIntelligenceLayer />
       </main>
