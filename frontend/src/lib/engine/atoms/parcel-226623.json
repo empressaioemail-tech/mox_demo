@@ -1,0 +1,54 @@
+{
+  "atomId": "did:hauska:parcel:austin_tx/travis-cad/226623",
+  "entityType": "parcel",
+  "entityId": "austin_tx/travis-cad/226623",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:7c1f3a9e2b4d8c6f0a5e1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5e4f312",
+  "schemaVersion": "mox-atom/1",
+  "payload": {
+    "geographicId": "226623",
+    "appraisalDistrict": "Travis Central Appraisal District",
+    "situsAddress": "611 Nelray Blvd, Austin, TX 78751",
+    "lotInListing": "611 Nelray",
+    "neighborhood": "North Loop",
+    "zoningDistrict": "MF-3",
+    "currentUse": "duplex (existing improvement; redevelopment site)",
+    "partOfAssemblage": "did:hauska:site:nelray-607-611",
+    "placeKey": "place:austin_tx/611-nelray-blvd",
+    "lotConfirmation": "operator-confirmed (Travis CAD property-detail link provided by operator)"
+  },
+  "provenance": [
+    {
+      "role": "substrate-tool",
+      "tool": "resolve_place",
+      "repo": "hauska-mcp-server",
+      "adapter": "place-layer",
+      "produced": "placeKey + jurisdiction_key from address geocode",
+      "note": "resolve_place resolves the listing address to a placeKey; get_place_layers then returns the parcel layer atomDid for this lot.",
+      "url": "https://www.loopnet.com/property/611-nelray-blvd-austin-tx-78751/48453-226606/",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "operator-source",
+      "tool": "get_place_layers",
+      "repo": "hauska-mcp-server",
+      "layerKind": "parcel",
+      "produced": "Travis CAD geographic ID 226623 (parcel layer)",
+      "citation": "Operator-provided Travis CAD property detail (parcel 226623); Travis Central Appraisal District.",
+      "url": "https://www.traviscad.org/property-search",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Confirmed lot of the three-lot listing assemblage. The operator supplied the Travis CAD property-detail link for geographic ID 226623; resolve_place geocodes the situs address to a placeKey and get_place_layers returns the parcel layer. This atom is the anchor lot; the two sibling lots (607, 609 Nelray) are resolved through the same place/parcel substrate path and carry baseline confidence pending operator confirmation.",
+  "confidence": {
+    "value": 0.95,
+    "state": "provenance-backed",
+    "stateNote": "Backed by operator-provided Travis CAD record + place/parcel substrate resolution. Not earned-calibrated on Mox outcomes."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "sourceListedAt": "2024-08-01"
+  },
+  "accessPolicy": "public-free"
+}

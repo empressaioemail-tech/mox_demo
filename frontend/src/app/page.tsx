@@ -104,11 +104,8 @@ export default function Home() {
 
         <section className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-400">
           <p>
-            Backend engine:{" "}
-            <code className="text-zinc-300">
-              {process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8787"}
-              /health
-            </code>
+            Engine (self-contained, same-origin):{" "}
+            <code className="text-zinc-300">/api/health</code>
           </p>
         </section>
       </main>

@@ -1,0 +1,49 @@
+{
+  "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-562",
+  "entityType": "code-section",
+  "entityId": "austin_tx/austin-land-development-code-current-supplement/25-2-562",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c",
+  "schemaVersion": "mox-atom/1",
+  "sourceAdapter": "municode-json",
+  "sourceUrl": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-562",
+  "fetchedAt": "2026-06-13T00:00:00Z",
+  "payload": {
+    "codeEditionId": "austin_tx/austin-land-development-code-current-supplement",
+    "sectionNumber": "25-2-562",
+    "title": "Multifamily Residence Medium Density (MF-3) District Regulations",
+    "subsectionPath": "Title 25 > Ch 25-2 Zoning > Subch C > Art 3 > Div 1",
+    "bodyText": "Site development regulations for the MF-3 (Multifamily Residence Medium Density) district. The maximum height of a structure is 40 feet. Maximum density is governed by the site development regulations applicable to the district (36 units per acre headline per the MF district intensity standards). Floor-to-area ratio, building coverage, impervious cover, and yard setbacks are set by the site development regulations table at §25-2-491. A use or structure that exceeds the district envelope requires rezoning to a higher-intensity multifamily district or a variance granted by the Board of Adjustment.",
+    "verbatimTextDeepLink": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-562",
+    "keyStandards": {
+      "maxHeightFt": 40,
+      "maxDensityUnitsPerAcre": 36
+    }
+  },
+  "provenance": [
+    {
+      "role": "substrate-corpus",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "corpus": "Austin LDC code corpus (Municode productId 15303 'Land Development Code')",
+      "corpusFile": "hauska-engine/services/retrieval-api/corpus/snapshot.json",
+      "curatedQuerySupport": "hauska-engine/tools/migrate-legacy-codes/src/austin-ldc-curated-queries.ts (Austin LDC Title 25 Ch 25-2 Zoning curated query set; AUSTIN_LDC_JURISDICTION = austin_tx)",
+      "produced": "MF-3 district regulations section text + key standards",
+      "citation": "Austin Land Development Code §25-2-562 (MF-3 district regulations).",
+      "url": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-562",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Primary code-section atom for the hero finding. Produced from the Austin LDC code corpus ingested into hauska-engine via the Municode JSON adapter (the LDC is a separate Municode product, productId 15303, selected by the productNameFilter in austin-ldc-curated-queries.ts). On the ADR-019 interim deep-link footing the verbatim normative text is deep-linked to the publisher viewer and bodyText carries Hauska's structural summary; the 40 ft height and 36 units/acre headline match docs/property_ground_truth.md.",
+  "confidence": {
+    "value": 0.9,
+    "state": "provenance-backed",
+    "stateNote": "Section identity and key standards sourced from the Austin LDC corpus with a publisher deep-link; headline cross-checked against the ground-truth doc. Not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "codeEdition": "Austin Land Development Code (current supplement)"
+  },
+  "accessPolicy": "public-free"
+}

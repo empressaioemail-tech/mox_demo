@@ -1,39 +1,65 @@
 /**
- * WS-5 engine client. Talks to the WS-2 backend (engine + gated atom store).
+ * WS-5 engine client. Talks to the engine, which now lives INSIDE this Next.js
+ * app as same-origin API route handlers (frontend/src/app/api/*). No
+ * NEXT_PUBLIC_BACKEND_URL, no local backend — the fix for the deployed
+ * "Engine unreachable" bug.
  *
  * The investor room is a GENERATED, CITED ARTIFACT (honesty guardrail 3): it
  * assembles itself from the live engine output for the "generate the LP view"
  * intent, then drills every surfaced number to its source atom through the same
- * gated atom API. It does NOT stand up the live, revocable LP umbilical (that is
- * gated on the auth build); it is the artifact you would hand an LP instead of a
- * static PDF.
+ * gated atom API. It does NOT stand up the live, revocable LP umbilical; it is
+ * the artifact you would hand an LP instead of a static PDF.
+ *
+ * Note on origins: fetchAtom + recordCalibration run in client components, so
+ * they use SAME-ORIGIN relative paths. assembleLpView runs in a server
+ * component, where relative fetch has no origin — it derives the same-origin
+ * absolute base from the incoming request headers (next/headers), still hitting
+ * this deployment's own /api.
  */
 
 import type { AssemblyResult, AtomEnvelope } from "./types";
 
-/** The tenant key the demo runs under (mirrors the WS-2 brief). */
+/** The tenant key the demo runs under (mirrors the engine gate registry). */
 export const HAUSKA_KEY = "mox-tenant-key";
 export const HAUSKA_KEY_HEADER = "X-Hauska-Key";
 
 /** The intent that assembles the investor / data-room surface. */
 export const LP_VIEW_INTENT = "generate the LP view";
 
-function backendBase(): string {
-  return (
-    process.env.NEXT_PUBLIC_BACKEND_URL ??
-    process.env.BACKEND_URL ??
-    "http://localhost:8787"
-  );
+/**
+ * Server-side: resolve this deployment's own origin from the request headers so
+ * a server component can fetch its own same-origin /api. Falls back to a
+ * localhost dev origin. Dynamically imports next/headers so this module stays
+ * importable from client components (which never call this path).
+ */
+async function sameOriginBase(): Promise<string> {
+  try {
+    const { headers } = await import("next/headers");
+    const h = await headers();
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    if (host) {
+      const proto =
+        h.get("x-forwarded-proto") ??
+        (host.startsWith("localhost") || host.startsWith("127.")
+          ? "http"
+          : "https");
+      return `${proto}://${host}`;
+    }
+  } catch {
+    /* not in a request scope */
+  }
+  return `http://localhost:${process.env.PORT ?? 3000}`;
 }
 
 /**
- * Server-side: assemble the LP view from the engine. Returns null on any
- * failure so the page can render an honest "engine unreachable" state rather
- * than crash. No-store so the artifact reflects the live engine + calibration.
+ * Server-side: assemble the LP view from the engine via same-origin /api/intent.
+ * Returns null on any failure so the page renders an honest "engine unreachable"
+ * state rather than crash. No-store so the artifact reflects the live engine.
  */
 export async function assembleLpView(): Promise<AssemblyResult | null> {
   try {
-    const res = await fetch(`${backendBase()}/api/intent`, {
+    const base = await sameOriginBase();
+    const res = await fetch(`${base}/api/intent`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,16 +76,14 @@ export async function assembleLpView(): Promise<AssemblyResult | null> {
 }
 
 /**
- * Client-side: drill a single atom to its source (gated). Used by the lineage
- * drawer so every headline number resolves down to the atom it came from.
- * Returns null if the atom is missing or gated out (the gate is honest: a
+ * Client-side: drill a single atom to its source (gated), same-origin. Used by
+ * the lineage drawer so every headline number resolves down to the atom it came
+ * from. Returns null if the atom is missing or gated out (the gate is honest: a
  * gated-out atom is indistinguishable from not-found).
  */
 export async function fetchAtom(atomId: string): Promise<AtomEnvelope | null> {
   try {
-    const base =
-      process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8787";
-    const res = await fetch(`${base}/api/atoms/${encodeURIComponent(atomId)}`, {
+    const res = await fetch(`/api/atoms/${encodeURIComponent(atomId)}`, {
       headers: { [HAUSKA_KEY_HEADER]: HAUSKA_KEY },
       cache: "no-store",
     });
@@ -84,10 +108,10 @@ export interface CalibrationResult {
 }
 
 /**
- * Client-side: record an accept / edit / reject on a surfaced finding item.
- * This is the deposit-loop write path (POST /api/calibration). The earning loop
- * is LIVE — it records the signal — but it does NOT relabel the number as
- * earned-calibrated (guardrail 2). Returns the updated reflection.
+ * Client-side: record an accept / edit / reject on a surfaced finding item,
+ * same-origin. This is the deposit-loop write path (POST /api/calibration). The
+ * earning loop is LIVE — it records the signal — but it does NOT relabel the
+ * number as earned-calibrated (guardrail 2). Returns the updated reflection.
  */
 export async function recordCalibration(input: {
   atomId: string;
@@ -96,9 +120,7 @@ export async function recordCalibration(input: {
   note?: string;
 }): Promise<CalibrationResult | null> {
   try {
-    const base =
-      process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8787";
-    const res = await fetch(`${base}/api/calibration`, {
+    const res = await fetch(`/api/calibration`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

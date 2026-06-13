@@ -1,0 +1,54 @@
+{
+  "atomId": "did:hauska:flood-zone:austin_tx/nelray-607-611",
+  "entityType": "flood-zone",
+  "entityId": "austin_tx/nelray-607-611",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f",
+  "schemaVersion": "mox-atom/1",
+  "payload": {
+    "appliesToSite": "did:hauska:site:nelray-607-611",
+    "appliesToParcels": [
+      "did:hauska:parcel:austin_tx/travis-cad/226623",
+      "did:hauska:parcel:austin_tx/travis-cad/607-nelray",
+      "did:hauska:parcel:austin_tx/travis-cad/609-nelray"
+    ],
+    "femaFloodZone": "X (unshaded)",
+    "floodZoneDescription": "Area of minimal flood hazard, outside the 0.2% annual chance floodplain.",
+    "inSpecialFloodHazardArea": false,
+    "femaPanel": "TBD-SUBSTRATE-RESOLVED",
+    "femaPanelNote": "FIRM panel id materializes from the place dossier federalSummaryRefs flood layer when the live Place API is reachable.",
+    "localFloodplainNote": "North Loop / Nelray Blvd is inland upland Austin, not adjacent to Waller Creek or Shoal Creek floodplains; redevelopment review still subject to Austin LDC Ch 25-7 (Drainage) and §25-12-53 (flood loads)."
+  },
+  "provenance": [
+    {
+      "role": "substrate-tool",
+      "tool": "get_place_dossier",
+      "repo": "hauska-mcp-server",
+      "produced": "federalSummaryRefs flood layer (FEMA flood-zone summary) for the placeKey",
+      "note": "get_place_dossier returns federalSummaryRefs; the FEMA flood-zone determination is one such federal reference layer keyed to the resolved placeKey.",
+      "citation": "FEMA National Flood Hazard Layer via place dossier federal-summary layer; Austin LDC Ch 25-7 (Drainage).",
+      "url": "https://msc.fema.gov/portal/home",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "substrate-corpus",
+      "tool": "search_atoms",
+      "repo": "hauska-engine",
+      "corpus": "Austin LDC code corpus",
+      "produced": "applicable drainage / flood-load code references (§25-7-3, §25-7-8, §25-12-53)",
+      "citation": "Austin LDC §25-7 (Drainage); §25-12-53 (flood loads).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Flood determination for the three-lot assemblage. Derived from the place dossier's federal-summary flood layer (get_place_dossier federalSummaryRefs) keyed to the resolved placeKey. The site sits in inland upland North Loop away from the Waller/Shoal Creek floodplains, consistent with FEMA Zone X (minimal hazard). The FIRM panel id is held as TBD-SUBSTRATE-RESOLVED pending a live federal-layer fetch; the zone classification is the substrate's summary, not hand-asserted, and applicable Austin drainage/flood-load code sections are linked.",
+  "confidence": {
+    "value": 0.75,
+    "state": "baseline",
+    "stateNote": "Zone classification from the place dossier federal-summary layer; exact FIRM panel pending live Place-API fetch. Baseline, provenance-backed, not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z"
+  },
+  "accessPolicy": "public-free"
+}

@@ -1,0 +1,90 @@
+{
+  "atomId": "did:hauska:finding:nelray-607-611/mf3-height-density-exceedance",
+  "entityType": "finding",
+  "entityId": "nelray-607-611/mf3-height-density-exceedance",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:8192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f70",
+  "schemaVersion": "mox-atom/1",
+  "payload": {
+    "severity": "blocker",
+    "category": "height",
+    "secondaryCategories": ["coverage", "occupancy"],
+    "headline": "Proposed 5-story building exceeds MF-3 envelope (40 ft height; 36 units/acre).",
+    "text": "The proposed building is a 5-story apartment structure. The site (607-611 Nelray, three contiguous lots) is zoned MF-3, which caps structure height at 40 feet (roughly three stories) and density at 36 units per acre (about 20 units on 0.56 acres before bonuses). A 5-story building plainly exceeds the 40-foot height envelope and, depending on final unit count, likely the density cap. This is flagged before submission so it can be resolved in entitlement rather than discovered in plan review.",
+    "resolutionPaths": [
+      {
+        "path": "rezone",
+        "description": "Rezone from MF-3 to a higher-intensity multifamily district. MF-4 permits 60 ft (verified via §25-2-564), accommodating ~5 stories, and higher density. Requires City Council approval.",
+        "citation": "Austin LDC §25-2-564 (MF-4, 60 ft)"
+      },
+      {
+        "path": "variance",
+        "description": "Seek a height/density variance through the City of Austin Board of Adjustment, demonstrating the hardship and findings the BOA requires.",
+        "citation": "Austin LDC §25-2 variance authority; Board of Adjustment"
+      }
+    ],
+    "subjectBuilding": "did:hauska:building:nelray-5story-apartment",
+    "subjectSite": "did:hauska:site:nelray-607-611",
+    "violatedStandard": {
+      "standard": "MF-3 maximum height 40 ft; maximum density 36 units/acre",
+      "proposed": "5 stories (~55-60 ft)",
+      "exceeds": true
+    },
+    "citations": [
+      { "kind": "code-section", "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-562", "label": "Austin LDC §25-2-562 (MF-3 district regulations)" },
+      { "kind": "code-section", "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-491", "label": "Austin LDC §25-2-491 (site development regulations)" },
+      { "kind": "code-section", "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-564", "label": "Austin LDC §25-2-564 (MF-4 rezone path, 60 ft)" }
+    ],
+    "asOfDate": "2026-06-13"
+  },
+  "provenance": [
+    {
+      "role": "subject-atom",
+      "tool": "aps-model-derivative (BLOCKED - Part A)",
+      "produced": "proposed building height / story count (provisional)",
+      "derivedFromAtom": "did:hauska:building:nelray-5story-apartment",
+      "note": "Story count is from the provisional building twin (5 Story Apartment.rvt); exact extracted height backfills from APS metadata when Part A unblocks.",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "ground-truth-atom",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "produced": "MF-3 standards the proposal is checked against",
+      "derivedFromAtom": "did:hauska:zoning-district:austin_tx/mf-3",
+      "citation": "Austin LDC §25-2-562 / §25-2-491 via Austin LDC code corpus.",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "resolution-path-atom",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "produced": "MF-4 60 ft rezone-path verification",
+      "derivedFromAtom": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-564",
+      "citation": "Austin LDC §25-2-564 (MF-4 district regulations).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "validation-source",
+      "tool": "ground-truth-doc",
+      "repo": "mox_demo",
+      "produced": "verified headline (5 stories exceeds MF-3 40 ft) and resolution paths (MF-4+ or BOA variance)",
+      "citation": "docs/property_ground_truth.md (the hero finding section).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Hero plan-review finding. Composes the provisional building twin (proposed 5 stories) against the MF-3 ground-truth zoning atom (40 ft / 36 units/acre, itself sourced from the Austin LDC code corpus). The exceedance is arithmetic and direct: 5 stories cannot fit a 40 ft envelope. Resolution paths are provenance-backed: the MF-4 rezone path carries the §25-2-564 60 ft figure verified from the corpus, and the variance path names the Board of Adjustment authority. The headline and paths match docs/property_ground_truth.md. The confidence is deliberately BASELINE / provenance-backed, not earned-calibrated: the system has not yet observed Mox plan-review outcomes to calibrate against, and the honesty guardrails forbid presenting it as earned.",
+  "confidence": {
+    "value": 0.92,
+    "state": "baseline",
+    "chipLabel": "Confidence: baseline (provenance-backed)",
+    "stateNote": "BASELINE / provenance-backed. Backed by the code corpus citation and the building/zoning atoms it composes; NOT calibrated on Mox plan-review outcomes. Per the honesty guardrails this is shown with its state visible and is never presented as earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "asOfDate": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "codeEdition": "Austin Land Development Code (current supplement)"
+  },
+  "accessPolicy": "public-free"
+}
