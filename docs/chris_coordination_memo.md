@@ -38,6 +38,10 @@ Practically, that means Chris's agent works the frontend design layer: the compo
 
 The adaptive UI is the product's soul, and it is the thing Mox could not picture from words in the first meeting. The demo's job is to let them feel it. Chris's design is what turns "they described something" into "I get it now." Everything else in this repo exists to give that feeling something real to stand on.
 
+## Capture and pull-back (keep the vision current)
+
+Adaptive UI is now a portfolio principle, not just this demo (canonical home: doc_repo `24_adaptive_ui/`). As you make design decisions, maintain `docs/adaptive_ui_design_system.md` in this repo: working notes plus a clearly-marked "For pull-back to canon" section for settled decisions. The planner pulls that section into the canonical design system at session boundaries, so your visual work compounds across every product surface instead of staying in the demo. Treat `docs/adaptive_ui_vision.md` (the vision) as fixed unless the underlying principle changes; the design system is yours to grow.
+
 ## Suggested kickoff for Chris's agent
 
 "Read docs/chris_coordination_memo.md, then README.md, docs/demo_run_sheet.md, and docs/adaptive_ui_vision.md, then study mox_html_original/ as the design language. I am the product-design layer for this Mox demo. Propose a design pass on the adaptive command surface and the component system that elevates the mockups while honoring the honesty guardrails and the five-beat run sheet. Show me the plan before building."
