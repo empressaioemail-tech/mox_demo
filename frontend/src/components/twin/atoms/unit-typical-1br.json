@@ -1,0 +1,50 @@
+{
+  "atomId": "did:hauska:unit:nelray-5story/typical-1br",
+  "entityType": "unit",
+  "entityId": "nelray-5story/typical-1br",
+  "jurisdictionTenant": "austin_tx",
+  "schemaVersion": "mox-atom/1",
+  "provisional": true,
+  "provisionalReason": "Room boundaries, areas, and per-room spatial references backfill from the APS Model Derivative metadata (WS-1 Part A, BLOCKED on APS credentials). Room names below are the floor-plan room names from docs/property_ground_truth.md.",
+  "payload": {
+    "unitType": "1BR",
+    "name": "Typical One-Bedroom",
+    "building": "did:hauska:building:nelray-5story-apartment",
+    "spatialRef": {
+      "apsModelUrn": "PLACEHOLDER_APS_URN_BACKFILL_PART_A",
+      "apsDbIds": "PLACEHOLDER_DBIDS_BACKFILL_PART_A",
+      "todo": "TODO(WS-1 Part A): backfill apsModelUrn + per-room dbId / external-id spatial references from the Model Derivative once the RVT is processed. Placeholders until then."
+    },
+    "rooms": [
+      { "name": "MSTR", "role": "primary-bedroom", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Kitchen", "role": "kitchen", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Living", "role": "living", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Baths", "role": "bathroom", "spatialRefStatus": "placeholder-backfill-part-a" }
+    ]
+  },
+  "provenance": [
+    {
+      "role": "twin-source",
+      "tool": "aps-model-derivative",
+      "status": "BLOCKED (WS-1 Part A; APS credentials not yet in .env)",
+      "produced": "(pending) room boundaries, areas, dbIds from RVT derivative metadata",
+      "fetchedAt": null
+    },
+    {
+      "role": "documented-source",
+      "tool": "ground-truth-doc",
+      "repo": "mox_demo",
+      "produced": "floor-plan room names (MSTR, Kitchen, Living, Baths)",
+      "citation": "docs/property_ground_truth.md (Floor Plans: unit-level plans).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Representative one-bedroom unit twin using documented floor-plan room names. Authoritative geometry and APS spatial references are blocked on Part A; this atom is provisional with placeholder spatial refs flagged for backfill.",
+  "confidence": {
+    "value": 0.5,
+    "state": "provisional",
+    "stateNote": "PROVISIONAL pending APS extraction. Room inventory documented from the ground-truth doc; spatial refs are placeholders. Not earned-calibrated."
+  },
+  "freshness": { "asOf": "2026-06-13", "fetchedAt": "2026-06-13T00:00:00Z" },
+  "accessPolicy": "public-free"
+}

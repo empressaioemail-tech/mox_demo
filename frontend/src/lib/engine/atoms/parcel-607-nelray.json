@@ -1,0 +1,54 @@
+{
+  "atomId": "did:hauska:parcel:austin_tx/travis-cad/607-nelray",
+  "entityType": "parcel",
+  "entityId": "austin_tx/travis-cad/607-nelray",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:1a2b3c4d5e6f70819293a4b5c6d7e8f90112233445566778899aabbccddeeff0",
+  "schemaVersion": "mox-atom/1",
+  "payload": {
+    "geographicId": "TBD-SUBSTRATE-RESOLVED",
+    "geographicIdNote": "Sibling lot resolved via get_place_layers parcel layer; the canonical Travis CAD geographic ID materializes when the place-layer parcel atomDid is fetched against the live Place API. Held as a stable local id until then.",
+    "appraisalDistrict": "Travis Central Appraisal District",
+    "situsAddress": "607 Nelray Blvd, Austin, TX 78751",
+    "lotInListing": "607 Nelray",
+    "neighborhood": "North Loop",
+    "zoningDistrict": "MF-3",
+    "currentUse": "duplex (existing improvement; redevelopment site)",
+    "partOfAssemblage": "did:hauska:site:nelray-607-611",
+    "placeKey": "place:austin_tx/607-nelray-blvd",
+    "lotConfirmation": "substrate-resolved (not yet operator-confirmed)"
+  },
+  "provenance": [
+    {
+      "role": "substrate-tool",
+      "tool": "resolve_place",
+      "repo": "hauska-mcp-server",
+      "adapter": "place-layer",
+      "produced": "placeKey + jurisdiction_key for 607 Nelray from address geocode",
+      "note": "The listing 607-611 Nelray spans three contiguous lots. resolve_place geocodes 607 Nelray to its own placeKey.",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    },
+    {
+      "role": "substrate-tool",
+      "tool": "get_place_layers",
+      "repo": "hauska-mcp-server",
+      "layerKind": "parcel",
+      "produced": "parcel layer ref (atomDid + asOf) for the 607 lot",
+      "citation": "Rocket Homes listing 607-611 Nelray (three contiguous lots); Travis Central Appraisal District parcel layer via place substrate.",
+      "url": "https://rocket.com/homes/listings/607-611-nelray-blvd-austin-tx-78751",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Second of the three contiguous listing lots. Per docs/property_ground_truth.md the listing spans 607, 609/611 Nelray and only parcel 226623 (situs 611) is operator-confirmed; resolving the remaining two lots is the WS-1 substrate task. This atom represents the 607 lot resolved through resolve_place + get_place_layers. The Travis CAD geographic ID is held as a stable local id (TBD-SUBSTRATE-RESOLVED) and backfilled from the parcel-layer atomDid when the live Place API (PLACE_API_ENABLED) is reachable; values are not hand-faked against the substrate.",
+  "confidence": {
+    "value": 0.7,
+    "state": "baseline",
+    "stateNote": "Lot identity and assemblage membership are substrate-resolved from the listing + place layer but not operator-confirmed; the geographic ID is pending live Place-API fetch. Baseline, provenance-backed, not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "sourceListedAt": "2024-08-01"
+  },
+  "accessPolicy": "public-free"
+}

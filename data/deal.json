@@ -1,0 +1,88 @@
+{
+  "atomId": "did:hauska:deal:nelray-607-611",
+  "entityType": "deal",
+  "entityId": "nelray-607-611",
+  "jurisdictionTenant": "mox-tenant",
+  "schemaVersion": "mox-atom/1",
+  "contentHash": "sha256:91a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f80",
+  "payload": {
+    "name": "607-611 Nelray Blvd — North Loop Redevelopment",
+    "address": "607-611 Nelray Blvd, Austin, TX 78751",
+    "neighborhood": "North Loop",
+    "dealType": "ground-up redevelopment",
+    "listPrice": 2200000,
+    "listedAt": "2024-08-01",
+    "site": {
+      "siteDid": "did:hauska:site:nelray-607-611",
+      "acres": 0.56,
+      "sqFt": 24477,
+      "lotCount": 3,
+      "currentImprovements": "two duplexes and one single-family home, fully leased"
+    },
+    "apsModelUrn": "PLACEHOLDER_APS_URN_BACKFILL_PART_A",
+    "apsModelUrnTodo": "TODO(WS-1 Part A): the deal's building twin URN is a placeholder. Backfill with the real APS model URN (urn:adsk.objects... base64) after the RVT upload + Model Derivative completes. Part A is BLOCKED until APS_CLIENT_ID / APS_CLIENT_SECRET land in .env. WS-4 (spatial twin / APS viewer) loads this URN; the entitlement finding's height check finalizes against APS-extracted height at the same time.",
+    "heroFinding": "did:hauska:finding:nelray-607-611/mf3-height-density-exceedance"
+  },
+  "composition": [
+    { "childEntityType": "building", "childMode": "expanded", "dataKey": "buildingTwin" },
+    { "childEntityType": "unit", "childMode": "compact", "dataKey": "units" },
+    { "childEntityType": "parcel", "childMode": "compact", "dataKey": "parcels" },
+    { "childEntityType": "zoning-district", "childMode": "card", "dataKey": "zoning" },
+    { "childEntityType": "code-section", "childMode": "inline", "dataKey": "codeSections" },
+    { "childEntityType": "flood-zone", "childMode": "compact", "dataKey": "flood" },
+    { "childEntityType": "finding", "childMode": "focus", "dataKey": "findings" },
+    { "childEntityType": "operating-proforma", "childMode": "card", "dataKey": "operating" }
+  ],
+  "members": {
+    "buildingTwin": [
+      { "id": "nelray-5story-apartment", "atomDid": "did:hauska:building:nelray-5story-apartment", "provisional": true }
+    ],
+    "units": [
+      { "id": "nelray-5story/typical-2br", "atomDid": "did:hauska:unit:nelray-5story/typical-2br", "provisional": true },
+      { "id": "nelray-5story/typical-1br", "atomDid": "did:hauska:unit:nelray-5story/typical-1br", "provisional": true }
+    ],
+    "parcels": [
+      { "id": "226623", "atomDid": "did:hauska:parcel:austin_tx/travis-cad/226623", "lot": "611 Nelray", "confirmation": "operator-confirmed" },
+      { "id": "607-nelray", "atomDid": "did:hauska:parcel:austin_tx/travis-cad/607-nelray", "lot": "607 Nelray", "confirmation": "substrate-resolved" },
+      { "id": "609-nelray", "atomDid": "did:hauska:parcel:austin_tx/travis-cad/609-nelray", "lot": "609 Nelray", "confirmation": "substrate-resolved" }
+    ],
+    "zoning": [
+      { "id": "austin_tx/mf-3", "atomDid": "did:hauska:zoning-district:austin_tx/mf-3" }
+    ],
+    "codeSections": [
+      { "id": "25-2-562", "atomDid": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-562", "label": "MF-3 district regulations" },
+      { "id": "25-2-491", "atomDid": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-491", "label": "Site development regulations" },
+      { "id": "25-2-564", "atomDid": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-564", "label": "MF-4 rezone path (60 ft)" }
+    ],
+    "flood": [
+      { "id": "austin_tx/nelray-607-611", "atomDid": "did:hauska:flood-zone:austin_tx/nelray-607-611" }
+    ],
+    "findings": [
+      { "id": "mf3-height-density-exceedance", "atomDid": "did:hauska:finding:nelray-607-611/mf3-height-density-exceedance", "hero": true }
+    ],
+    "operating": [
+      { "id": "nelray-5story", "atomDid": "did:hauska:operating-proforma:nelray-5story" }
+    ]
+  },
+  "provenance": [
+    {
+      "role": "composition",
+      "tool": "ws1-spine-compose",
+      "repo": "mox_demo",
+      "produced": "the deal molecule: building twin + units + parcels + zoning + code + flood + entitlement finding + operating pro forma",
+      "citation": "WS-1 dispatch brief Part C; docs/property_ground_truth.md.",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "The deal molecule composes the full Nelray opportunity from its member atoms. Ground-truth atoms (parcels, zoning, code, flood, the hero entitlement finding) are public-free and produced from the Hauska place/parcel + code substrate; the operating pro forma is tenant-private (the two-flywheel partition). The building twin and unit atoms are provisional because APS extraction (Part A) is blocked; the deal's apsModelUrn is a clearly-marked placeholder with a TODO for backfill when APS credentials land. Composition edges follow the @hauska/atom-contract pattern (childEntityType + childMode + dataKey), with member rows under `members[dataKey]` carrying each child's atomDid.",
+  "confidence": {
+    "value": 0.7,
+    "state": "baseline",
+    "stateNote": "Molecule is assembled and provenance-backed across ground-truth atoms; building/unit members are provisional pending APS, and the operating side is a seed projection. Baseline, not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z"
+  },
+  "accessPolicy": "tenant-private"
+}

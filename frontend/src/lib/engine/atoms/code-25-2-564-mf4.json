@@ -1,0 +1,45 @@
+{
+  "atomId": "did:hauska:code-section:austin_tx/austin-land-development-code-current-supplement/25-2-564",
+  "entityType": "code-section",
+  "entityId": "austin_tx/austin-land-development-code-current-supplement/25-2-564",
+  "jurisdictionTenant": "austin_tx",
+  "contentHash": "sha256:6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e",
+  "schemaVersion": "mox-atom/1",
+  "sourceAdapter": "municode-json",
+  "sourceUrl": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-564",
+  "fetchedAt": "2026-06-13T00:00:00Z",
+  "payload": {
+    "codeEditionId": "austin_tx/austin-land-development-code-current-supplement",
+    "sectionNumber": "25-2-564",
+    "title": "Multifamily Residence Moderate-High Density (MF-4) District Regulations",
+    "subsectionPath": "Title 25 > Ch 25-2 Zoning > Subch C > Art 3 > Div 1",
+    "bodyText": "Site development regulations for the MF-4 (Multifamily Residence Moderate-High Density) district. The maximum height of a structure is 60 feet, a step up from the 40-foot MF-3 limit. MF-4 also permits higher density than MF-3. A change from MF-3 to MF-4 requires a rezoning approved by City Council. This section establishes the higher-intensity district that the entitlement finding identifies as the rezone path for the proposed 5-story building.",
+    "verbatimTextDeepLink": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-564",
+    "keyStandards": { "maxHeightFt": 60 }
+  },
+  "provenance": [
+    {
+      "role": "substrate-corpus",
+      "tool": "search_atoms / get_atom",
+      "repo": "hauska-engine",
+      "corpus": "Austin LDC code corpus (Municode productId 15303 'Land Development Code')",
+      "corpusFile": "hauska-engine/services/retrieval-api/corpus/snapshot.json",
+      "produced": "MF-4 max height (60 ft) for the rezone-path verification",
+      "citation": "Austin Land Development Code §25-2-564 (MF-4 district regulations); MF-4 60 ft verified per docs/property_ground_truth.md directive.",
+      "url": "http://austin-tx.elaws.us/code/ldc_title25_ch25-2_subchc_art3_div1_sec25-2-564",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "The ground-truth doc directs that the exact MF-4 height (60 ft) and the variance path be verified through the substrate before the entitlement finding ships. This atom carries the MF-4 60 ft figure from the Austin LDC corpus so the finding's rezone path (MF-3 -> MF-4) is itself provenance-backed rather than asserted in the finding alone.",
+  "confidence": {
+    "value": 0.85,
+    "state": "provenance-backed",
+    "stateNote": "MF-4 60 ft height sourced from the Austin LDC corpus and cross-checked against the ground-truth doc directive. Not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z",
+    "codeEdition": "Austin Land Development Code (current supplement)"
+  },
+  "accessPolicy": "public-free"
+}

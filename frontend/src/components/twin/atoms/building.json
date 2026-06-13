@@ -1,0 +1,65 @@
+{
+  "atomId": "did:hauska:building:nelray-5story-apartment",
+  "entityType": "building",
+  "entityId": "nelray-5story-apartment",
+  "jurisdictionTenant": "austin_tx",
+  "schemaVersion": "mox-atom/1",
+  "provisional": true,
+  "provisionalReason": "APS extraction (WS-1 Part A: RVT->APS upload + Model Derivative) is BLOCKED pending APS credentials in .env. Building geometry, levels, room/unit boundaries, and areas backfill from the Model Derivative metadata when Part A unblocks.",
+  "payload": {
+    "name": "5 Story Apartment (proposed)",
+    "buildingType": "multifamily-apartment",
+    "proposedStories": 5,
+    "status": "proposed (ground-up redevelopment)",
+    "sourceModel": {
+      "rvtPath": "apartment_bldg/Apartments-20260613T130315Z-3-001/Apartments/Working Files/5 Story Apartment.rvt",
+      "note": "Heavy asset, gitignored. Referenced by path, not committed."
+    },
+    "spatialRef": {
+      "apsModelUrn": "PLACEHOLDER_APS_URN_BACKFILL_PART_A",
+      "apsDerivative": "PLACEHOLDER_SVF2_BACKFILL_PART_A",
+      "todo": "TODO(WS-1 Part A): replace apsModelUrn with the real urn:adsk.objects... base64 URN once the RVT is uploaded to an APS OSS bucket and Model Derivative (SVF2 + metadata) completes. Another agent fills this when APS_CLIENT_ID / APS_CLIENT_SECRET land in .env. The APS viewer (WS-4) loads this URN."
+    },
+    "levels": [
+      { "level": "L1", "name": "First Floor", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "level": "L2", "name": "Second Floor", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "level": "L3", "name": "Third Floor", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "level": "L4", "name": "Fourth Floor", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "level": "L5", "name": "Fifth Floor", "spatialRefStatus": "placeholder-backfill-part-a" }
+    ],
+    "site": "did:hauska:site:nelray-607-611",
+    "units": [
+      "did:hauska:unit:nelray-5story/typical-2br",
+      "did:hauska:unit:nelray-5story/typical-1br"
+    ]
+  },
+  "provenance": [
+    {
+      "role": "twin-source",
+      "tool": "aps-model-derivative",
+      "status": "BLOCKED (WS-1 Part A; APS credentials not yet in .env)",
+      "produced": "(pending) rooms, areas, levels, unit boundaries from RVT derivative metadata",
+      "citation": "Source RVT: 5 Story Apartment.rvt (operator-controlled Revit model of the proposed Nelray redevelopment).",
+      "fetchedAt": null
+    },
+    {
+      "role": "documented-source",
+      "tool": "ground-truth-doc",
+      "repo": "mox_demo",
+      "produced": "story count (5), building type, floor-plan room inventory (Bed 1, Bed 2, MSTR, Kitchen, Living, Baths)",
+      "citation": "docs/property_ground_truth.md (design and rendering assets; the RVT is the proposed 5-story building).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Building twin for the proposed 5-story Nelray apartment. The authoritative geometry and room/unit boundaries come from the APS Model Derivative of 5 Story Apartment.rvt, but that extraction (WS-1 Part A) is BLOCKED because APS credentials are not yet in .env. This atom is therefore PROVISIONAL: story count, building type, and the floor-plan room inventory are taken from docs/property_ground_truth.md, and the APS model URN / per-element spatial refs are clearly-marked placeholders with a TODO for backfill. The atom exists now so the deal molecule and the entitlement finding can compose against it; WS-4 (APS viewer) consumes the URN once filled.",
+  "confidence": {
+    "value": 0.5,
+    "state": "provisional",
+    "stateNote": "PROVISIONAL pending APS extraction (Part A blocked). Story count and room inventory are documented from the ground-truth doc; geometry/areas/URN are placeholders. Not provenance-complete and not earned-calibrated."
+  },
+  "freshness": {
+    "asOf": "2026-06-13",
+    "fetchedAt": "2026-06-13T00:00:00Z"
+  },
+  "accessPolicy": "public-free"
+}

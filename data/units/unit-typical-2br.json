@@ -1,0 +1,52 @@
+{
+  "atomId": "did:hauska:unit:nelray-5story/typical-2br",
+  "entityType": "unit",
+  "entityId": "nelray-5story/typical-2br",
+  "jurisdictionTenant": "austin_tx",
+  "schemaVersion": "mox-atom/1",
+  "provisional": true,
+  "provisionalReason": "Room boundaries, areas, and per-room spatial references backfill from the APS Model Derivative metadata (WS-1 Part A, BLOCKED on APS credentials). Room names below are the floor-plan room names from docs/property_ground_truth.md.",
+  "payload": {
+    "unitType": "2BR",
+    "name": "Typical Two-Bedroom",
+    "building": "did:hauska:building:nelray-5story-apartment",
+    "spatialRef": {
+      "apsModelUrn": "PLACEHOLDER_APS_URN_BACKFILL_PART_A",
+      "apsDbIds": "PLACEHOLDER_DBIDS_BACKFILL_PART_A",
+      "todo": "TODO(WS-1 Part A): backfill apsModelUrn + per-room dbId / external-id spatial references from the Model Derivative once the RVT is processed. Until then these are placeholders; unit -> model spatial linkage is provisional."
+    },
+    "rooms": [
+      { "name": "Bed 1", "role": "bedroom", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Bed 2", "role": "bedroom", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "MSTR", "role": "primary-bedroom", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Kitchen", "role": "kitchen", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Living", "role": "living", "spatialRefStatus": "placeholder-backfill-part-a" },
+      { "name": "Baths", "role": "bathroom", "spatialRefStatus": "placeholder-backfill-part-a" }
+    ]
+  },
+  "provenance": [
+    {
+      "role": "twin-source",
+      "tool": "aps-model-derivative",
+      "status": "BLOCKED (WS-1 Part A; APS credentials not yet in .env)",
+      "produced": "(pending) room boundaries, areas, dbIds from RVT derivative metadata",
+      "fetchedAt": null
+    },
+    {
+      "role": "documented-source",
+      "tool": "ground-truth-doc",
+      "repo": "mox_demo",
+      "produced": "floor-plan room names (Bed 1, Bed 2, MSTR, Kitchen, Living, Baths)",
+      "citation": "docs/property_ground_truth.md (Floor Plans: unit-level plans Bed 1, Bed 2, MSTR, Kitchen, Living, Baths).",
+      "fetchedAt": "2026-06-13T00:00:00Z"
+    }
+  ],
+  "reasoning": "Representative two-bedroom unit twin. The room set uses the exact floor-plan room names documented in the ground-truth doc (Bed 1, Bed 2, MSTR, Kitchen, Living, Baths). Authoritative geometry/areas and per-room APS spatial references come from the Model Derivative, which is blocked (Part A), so this atom is provisional with placeholder spatial refs flagged for backfill.",
+  "confidence": {
+    "value": 0.5,
+    "state": "provisional",
+    "stateNote": "PROVISIONAL pending APS extraction. Room inventory documented from the ground-truth doc; spatial refs are placeholders. Not earned-calibrated."
+  },
+  "freshness": { "asOf": "2026-06-13", "fetchedAt": "2026-06-13T00:00:00Z" },
+  "accessPolicy": "public-free"
+}
