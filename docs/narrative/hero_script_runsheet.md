@@ -11,55 +11,77 @@
 > `docs/narrative/differentiation.md`. Confidence-state rules:
 > `frontend/src/components/library/ConfidenceChip.tsx`.
 >
-> **RECONCILED 2026-06-13 (final WS-7 audit) · RE-RECONCILED 2026-06-13 (asset-twin
-> pass).** The assembly columns below are the *actual* live engine output (POST
-> /api/intent, X-Hauska-Key: mox-tenant-key, providerMode mock, 14 atoms — re-verified
-> this pass, all five intents return the components shown). Structural facts the
-> original draft got wrong, now corrected throughout: (a) the **Yardi intelligence
-> layer is its own surface** (`/yardi`), NOT a component the engine assembles — the
-> engine never returns a "Yardi" component, so "ride over a Yardi screen" is a
-> *staging* note for the presenter, not an assembly fact; (b) the engine **always
-> appends a `provenance-drill`** component, and surfaces the entitlement flag via
-> **`plan-review-findings` + `action-inbox`**, not a `variance-anomaly-card`, on the
-> deal/why-flagged intents. Component names confirmed against
-> `frontend/src/lib/engine.ts` `ComponentKind`.
+> **RE-RECONCILED 2026-06-13 (iteration 2 — self-contained engine / RBAC / redaction
+> / Sketchfab pass).** The assembly columns below are the *actual* live engine output
+> (POST `/api/intent` — now a SAME-ORIGIN Next.js API route, `X-Hauska-Key:
+> mox-tenant-key`, providerMode mock). The engine lives INSIDE the app
+> (`frontend/src/app/api/*` + `frontend/src/lib/engine/*`) — no separate backend, no
+> `NEXT_PUBLIC_BACKEND_URL`. Structural facts the original draft got wrong, corrected
+> throughout: (a) the **Yardi intelligence layer is its own surface** (`/yardi`), NOT
+> a component the engine assembles — "ride over a Yardi screen" is a *staging* note
+> for the presenter; (b) the engine **always appends a `provenance-drill`** component,
+> and surfaces the entitlement flag via **`plan-review-findings` + `action-inbox`**,
+> not a `variance-anomaly-card`, on the deal/why-flagged intents.
 >
-> **Asset-twin pass updates:** (1) the guardrail-5 open-line gap is RESOLVED — the
-> verbatim `OPENING_FRAMING_LINE` now renders via `<NarrativeFrame variant="open" />`
-> on the Yardi open beat (`frontend/src/app/yardi/page.tsx:29`) and the home hub
-> (`frontend/src/app/page.tsx:49`). (2) The **spatial twin is now a real surface at
-> `/twin`** (`frontend/src/app/twin/` + `frontend/src/components/twin/`), built on the
-> operator's real building assets with the live APS SVF2 viewer staged as a labeled
-> drop-in slot pending Autodesk entitlement. (3) The **"open a unit" beat now maps to
-> the `/twin` unit drill-down** (room chips load plan + interior elevation + the
-> composed atom panel), in addition to the engine's `unit-twin-viewer` assembly. The
-> engine intent assembly is unchanged.
+> **Iteration-2 walkthrough as-built (this is the canonical demo flow):**
+> 1. **Persistent header controls.** Every page mounts a sticky `DemoHeader`
+>    (`frontend/src/components/shell/DemoHeader.tsx`) carrying the WALKTHROUGH controls
+>    (start / prev / next / exit + beat indicator) AND the ROLE SWITCHER
+>    (`frontend/src/components/rbac/RoleSwitcher.tsx`) on every surface, so the
+>    presenter is never lost full-screen.
+> 2. **The guided walkthrough is five beats** (`frontend/src/components/walkthrough/beats.ts`),
+>    in this order: **open-yardi → spatial-twin → open-unit → adaptive-command →
+>    investor-room.** (Note: spatial-twin and open-unit are TWO beats, both on `/twin`;
+>    adaptive-command is its own beat on `/command`.) Each beat carries verbatim
+>    narration; the open/transition/close `sayAloud` lines are verbatim from `framing.md`.
+> 3. **Beat 4 (the twin 3D face) is a SKETCHFAB rendered, navigable embed** — NOT APS.
+>    Live APS SVF2 is off the critical path (account-entitlement gap). The slot
+>    (`frontend/src/components/aps/ApsViewerSlot.tsx`) renders `<SketchfabEmbed>` when
+>    `NEXT_PUBLIC_SKETCHFAB_MODEL_ID` is set, and a graceful "rendered 3D model —
+>    wiring up" fallback (no broken iframe) when unset. Either way it is labeled a
+>    RENDERING of the proposed design — not live tenant data, not a measured as-built.
+> 4. **The verbatim `OPENING_FRAMING_LINE`** renders via `<NarrativeFrame variant="open" />`
+>    on `/yardi` (`yardi/page.tsx:35`), the home hub (`page.tsx:81`), AND `/command`
+>    (`command/page.tsx:43`).
+> 5. **New demo moments:** the **RBAC role-switch** (switch the header role to
+>    Investor / LP and the operating internals visibly redact across command, Yardi,
+>    and twin) and the **investor redaction** (operator redacts/replaces sensitive
+>    lines, then previews as the LP). Both are scripted into the investor beat below.
 
 ## The arc (five beats, one operating system)
 
-The demo moves through five beats on one arc:
-**opens on Yardi (kill the rip-and-replace fear) → spatial twin → adaptive command →
-investor room.** The five hero intents sit on this arc:
+The guided walkthrough (`frontend/src/components/walkthrough/beats.ts`) drives FIVE
+beats, in this exact order:
+**open-yardi → spatial-twin → open-unit → adaptive-command → investor-room.**
 
-1. **Open on Yardi** — untouched, intelligence layer riding on top. Kills the
-   rip-and-replace fear before anything else happens. The verbatim opening framing
-   line renders here (`<NarrativeFrame variant="open" />`).
-2. **Spatial twin (`/twin`)** — pull back to the proposed building, the real model
-   rendered from the operator's Revit assets; units are atoms, ground truth (parcel /
-   zoning / code / flood) sits above them, the MF-3 entitlement finding is reachable
-   from the building level. The live APS 3D viewer is a labeled drop-in slot pending
-   Autodesk entitlement; the asset-based twin is the active spatial face.
-3. **Command surface** — the adaptive intent bar assembling views on demand; the
-   deposit loop turning.
-4. **Investor room** — the generated, cited artifact that de-risks the deal and
-   lands the "more investors" thesis.
+1. **open-yardi** (`/yardi`) — Yardi untouched, intelligence layer riding on top.
+   Kills the rip-and-replace fear before anything else happens. The verbatim opening
+   framing line renders here (`<NarrativeFrame variant="open" />`).
+2. **spatial-twin** (`/twin`, Building view) — pull back to the proposed building.
+   The 3D face is a **Sketchfab rendered, navigable embed** of the proposed design
+   (or a graceful fallback when no model id is set) — NOT APS, NOT live tenant data.
+   The asset-based hero (renderings/elevations/plans) is the active spatial face;
+   ground truth (parcel / zoning / code / flood) sits above; the MF-3 entitlement
+   finding is reachable from the building level.
+3. **open-unit** (`/twin`, Unit drill-down) — walk a unit room by room; the space,
+   its (tenant-private, RBAC-gated) operating layer, and the ground truth stacked
+   above it, each fact carrying its source.
+4. **adaptive-command** (`/command`) — the adaptive intent bar assembling views on
+   demand; the deposit loop turning. **RBAC moment:** switch the header role to
+   Investor / LP and the operating views visibly redact.
+5. **investor-room** (`/investor`) — the generated, cited artifact that de-risks the
+   deal and lands the "more investors" thesis. **Redaction moment:** the operator
+   redacts/replaces sensitive lines, then previews as the LP.
 
 The five hero intents ("show me this deal", "vet the proposed building", "why is this
-flagged", "open a unit", "generate the LP view") are the typed entry points across
-these beats.
+flagged", "open a unit", "generate the LP view") are the typed entry points layered
+onto these beats. The header carries persistent walkthrough + role-switcher controls
+on every surface.
 
-Say the **opening framing line verbatim** before intent 1 (it is also rendered on the
-Yardi/home open beat). Say the **closing copy** after intent 5. (Both in `framing.md`.)
+Say the **opening framing line verbatim** before beat 1 (it also renders on the
+Yardi/home/command open beats and is the open-beat `sayAloud`). Say the **transition**
+between the operating beats and the deal beats, and the **closing copy** after the
+investor beat. (All in `framing.md`; also the beats' `sayAloud` fields.)
 
 ## Component catalog (target — reconcile in audit)
 
@@ -109,9 +131,11 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
 ### Intent 2 — "vet the proposed building"
 - **Type:** `vet the proposed building`
 - **Beat:** Spatial twin → ground-truth layer (beat 2, building level). On `/twin`
-  this is the **Building view**: the renderings/elevations hero, the labeled APS
-  drop-in slot, the floor plans, the ground-truth layer, and the MF-3 entitlement
-  finding (`frontend/src/components/twin/BuildingView.tsx` + `EntitlementFinding.tsx`).
+  this is the **Building view**: the **Sketchfab rendered 3D model slot** (or the
+  graceful fallback), the renderings/elevations hero, the floor plans, the
+  ground-truth layer, and the MF-3 entitlement finding
+  (`frontend/src/components/twin/BuildingView.tsx` +
+  `frontend/src/components/aps/ApsViewerSlot.tsx` + `EntitlementFinding.tsx`).
 - **Actual assembly (verified live):** `plan-review-findings` (the MF-3 entitlement
   gap, lead) + `renderings-panel` (the proposed 5-story building) + `action-inbox`
   (the flag routed for accept/edit/reject — the deposit loop) + `provenance-drill`.
@@ -127,7 +151,10 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
   variance — flagged before you ever submit."
 - **Honesty:** Plan-review atom carries code citation + as-of date + `baseline`
   chip. Verify MF-4 height and variance path through the substrate before showing.
-  This is differentiation point 3 landing.
+  This is differentiation point 3 landing. The 3D slot is a **Sketchfab RENDERING of
+  the proposed design** — NOT APS, NOT a measured as-built, NOT live tenant data
+  (`ApsViewerSlot.tsx:75-91`); do not present it as a live APS/Revit viewer. Building
+  geometry/URN is `provisional` pending the APS Model Derivative backfill (WS-1 Part A).
 
 ### Intent 3 — "why is this flagged"
 - **Type:** `why is this flagged`
@@ -166,17 +193,21 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
   `provenance-drill`. Each unit carries a card-level **ConfidenceChip** with state.
 - **Honesty:** Room geometry/areas/per-room spatial refs are **provisional pending the
   APS Model Derivative backfill (WS-1 Part A)** — stated explicitly
-  (`UnitDrilldown.tsx:176-180`); the room inventory is documented from the floor-plan
+  (`UnitDrilldown.tsx:206-210`); the room inventory is documented from the floor-plan
   set. Plan/elevation imagery is curated Revit export, NOT a live 3D view. Operating
   data is representative seed, baseline chips, tenant-private and never pooled
-  (`OperatingLayer.tsx:74-77`). No live-Yardi unit sync implied (guardrail 6).
+  (`OperatingLayer.tsx:74-77`). **RBAC:** the operating layer is wrapped in a
+  `RoleGate resource="operating-internals"` (`UnitDrilldown.tsx:219-225`), so
+  switching the header role to LP visibly redacts it — the unit space + ground truth
+  stay; the tenant-private operating layer blacks out. No live-Yardi unit sync
+  implied (guardrail 6).
 - **Say:** "Every unit is an atom. Click in and you walk it room by room — the space,
   its operating layer, and the ground truth stacked above it, each fact carrying its
   source."
 
 ### Intent 5 — "generate the LP view"
 - **Type:** `generate the LP view`
-- **Beat:** Investor room (beat 4). The close.
+- **Beat:** Investor room (walkthrough beat 5, `investor-room`). The close.
 - **Actual assembly (verified live):** `investor-rollup` (the deal molecule +
   cited de-risking ledger) + `plan-review-findings` (the MF-3 finding + code
   citations + as-of date) + `renderings-panel` (hero photoreal renderings) +
@@ -189,10 +220,27 @@ never upgraded). No value renders `earned-through-outcome` (verified live).
 - **Say:** "This is what you hand an LP instead of a static PDF. Every number traces
   to its source. The code risk on the parcel is already vetted — jurisdictional
   diligence no other GP can show, and it is what lowers your cost of capital."
+- **Demo moment — REDACTION (operator → LP).** As the internal operator (Executive /
+  Acquisitions), use the per-field controls (`RedactionControls.tsx`,
+  `UnderwriteSummary.tsx` "Show / Redact / Replace") to redact or **replace** a
+  sensitive line — e.g. replace the list price with the representative band `~$4–5M`,
+  or the exact address with "North Loop, Austin TX". Say: "I control what the partner
+  sees. Replace swaps in a clearly representative value; redact blacks it out."
+- **Demo moment — ROLE SWITCH (preview as LP).** Switch the header role to
+  **Investor / LP**. The redacted fields black out, replaced fields show the
+  representative substitute with an amber "representative" chip, and the operating
+  internals redact. Say: "This is exactly what the LP receives — the curated, cited
+  view, never the tenant-private operating internals." (Honesty caveat for the
+  presenter: the lineage `DrillLink` on the underwrite is currently role-blind — see
+  honesty audit FIX-NEEDED #1 — so avoid drilling the pro-forma atom while in LP role
+  until that ships; what it would surface is the labeled representative seed atom, not
+  a real actual.)
 - **Honesty (guardrail 3):** The investor room reads as a generated, cited artifact,
   NOT the live revocable LP umbilical (gated on the auth build). We provide the
   provenance infrastructure; the GP makes the representations. Do not present it as
-  certifying returns.
+  certifying returns. **Replace** values are always clearly representative
+  (ranges / rounded / labeled), never a fabricated exact figure presented as real
+  (`UnderwriteSummary.tsx:38-55`, `RedactionControls.tsx:179-192`).
 
 ---
 
@@ -209,26 +257,38 @@ screen.
 
 ---
 
-## Reconciliation checklist (RECONCILED 2026-06-13 — final audit)
+## Reconciliation checklist (RECONCILED 2026-06-13 — iteration 2)
 
-- [x] Each intent's typed string matches the built parser — the five `HERO_INTENTS`
-  (`frontend/src/lib/engine.ts:154-160`) match verbatim and all five return
-  components live (verified against the running engine).
-- [x] Each component in the assembly columns exists and is named per
-  `ComponentKind` — assembly columns above REWRITTEN to the actual live output.
-  Corrections logged inline: intent 1 has no "Yardi" component (separate surface);
-  intents 1-3 surface the entitlement flag via `plan-review-findings` + `action-inbox`,
+- [x] Engine is SAME-ORIGIN — POST `/api/intent` hits the in-app route handler
+  (`frontend/src/app/api/intent/route.ts`), no `NEXT_PUBLIC_BACKEND_URL`, no separate
+  backend. The five hero intents match the built parser and return the components
+  shown above.
+- [x] Each component in the assembly columns exists and is named per `ComponentKind`.
+  Corrections logged inline: the engine returns no "Yardi" component (separate
+  surface); the entitlement flag surfaces via `plan-review-findings` + `action-inbox`,
   not `variance-anomaly-card`; every assembly appends `provenance-drill`.
 - [x] Every numeric value renders a `ConfidenceChip` with state — enforced by the
   required `state` prop (`ConfidenceChip.tsx:53`); live states are baseline /
   provenance-backed / provisional; no `earned-through-outcome`.
-- [x] Opening line before intent 1 — **RESOLVED:** the verbatim `OPENING_FRAMING_LINE`
-  is mounted on the Yardi open beat via `<NarrativeFrame variant="open" />`
-  (`frontend/src/app/yardi/page.tsx:29`) and on the home hub (`page.tsx:49`). Closing
-  copy after intent 5 is present (`investor/page.tsx:73-88`). Guardrail 5 clears.
-- [x] Deposit-loop moment shows the live loop, not calibrated numbers — `DepositLoop`
-  + `action-inbox`/plan-review accept-edit-reject record to `/api/calibration` and
-  re-run; no number flips to earned (guardrail 2).
+- [x] Opening line — the verbatim `OPENING_FRAMING_LINE` is mounted via
+  `<NarrativeFrame variant="open" />` on `/yardi` (`yardi/page.tsx:35`), the home hub
+  (`page.tsx:81`), AND `/command` (`command/page.tsx:43`); it is also the open-beat
+  `sayAloud` (`walkthrough/beats.ts:42-43`). Closing copy after the investor beat is
+  present (`InvestorRoom.tsx:347-384`). Guardrail 5 clears.
+- [x] Five-beat walkthrough order is open-yardi → spatial-twin → open-unit →
+  adaptive-command → investor-room (`walkthrough/beats.ts:34-81`); persistent header
+  walkthrough controls + role switcher on every surface (`DemoHeader.tsx`).
+- [x] Beat 4 (twin 3D) is a Sketchfab rendered embed (model-id set) / graceful
+  fallback (unset), labeled a rendering of the proposed design — NOT APS, NOT live
+  tenant data (`ApsViewerSlot.tsx`, `SketchfabEmbed.tsx`).
+- [x] RBAC role-switch redacts tenant-private operating internals for the LP across
+  command, Yardi, and twin (`renderers.tsx`, `AssistOverlay.tsx`, `UnitDrilldown.tsx`).
+  **Caveat:** the investor lineage drawer is role-blind — honesty audit FIX-NEEDED #1.
+- [x] Investor redaction/replace: replace values are clearly representative, redacted
+  fields blacked out for the LP (`RedactionControls.tsx`, `UnderwriteSummary.tsx`).
+- [x] Deposit-loop shows the live loop, not calibrated numbers — `DepositLoop` +
+  plan-review accept/edit/reject POST `/api/calibration` (client-accumulated,
+  stateless) and reflect a signal count; no number flips to earned (guardrail 2).
 - [x] Investor room reads as a generated, cited artifact (guardrail 3) — confirmed.
 - [x] No live-bidirectional-Yardi claim anywhere (guardrail 6) — confirmed by grep +
   read of every surface.

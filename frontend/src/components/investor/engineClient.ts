@@ -81,10 +81,20 @@ export async function assembleLpView(): Promise<AssemblyResult | null> {
  * from. Returns null if the atom is missing or gated out (the gate is honest: a
  * gated-out atom is indistinguishable from not-found).
  */
-export async function fetchAtom(atomId: string): Promise<AtomEnvelope | null> {
+export async function fetchAtom(
+  atomId: string,
+  opts?: { publicOnly?: boolean },
+): Promise<AtomEnvelope | null> {
   try {
+    // publicOnly omits the tenant key, so the gate resolves to public atoms
+    // only — a tenant-private atom then 404s (indistinguishable from not-found,
+    // no leak). The external LP role drills through this path, so the lineage
+    // drawer can never open tenant-private operating internals (RBAC).
+    const headers: Record<string, string> = opts?.publicOnly
+      ? {}
+      : { [HAUSKA_KEY_HEADER]: HAUSKA_KEY };
     const res = await fetch(`/api/atoms/${encodeURIComponent(atomId)}`, {
-      headers: { [HAUSKA_KEY_HEADER]: HAUSKA_KEY },
+      headers,
       cache: "no-store",
     });
     if (!res.ok) return null;

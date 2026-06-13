@@ -13,6 +13,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ConfidenceChip } from "@/components/library";
+import { useRole } from "@/components/rbac";
 import { fetchAtom, toChipState } from "./engineClient";
 import type { AtomEnvelope } from "./types";
 
@@ -67,6 +68,7 @@ function AtomDrawer({
   atomId: string;
   onClose: () => void;
 }) {
+  const { isExternal } = useRole();
   const [env, setEnv] = useState<AtomEnvelope | null>(null);
   const [status, setStatus] = useState<"loading" | "loaded" | "error">(
     "loading",
@@ -74,14 +76,17 @@ function AtomDrawer({
 
   const load = useCallback(async () => {
     setStatus("loading");
-    const result = await fetchAtom(atomId);
+    // An external LP drills public-only: tenant-private operating atoms 404 for
+    // them, so the lineage drawer can never expose operating internals. Internal
+    // roles drill with the tenant key and see full lineage.
+    const result = await fetchAtom(atomId, { publicOnly: isExternal });
     if (result?.atom) {
       setEnv(result);
       setStatus("loaded");
     } else {
       setStatus("error");
     }
-  }, [atomId]);
+  }, [atomId, isExternal]);
 
   useEffect(() => {
     void load();
@@ -135,12 +140,14 @@ function AtomDrawer({
           {status === "error" && (
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 text-zinc-400">
               <p className="font-medium text-zinc-200">
-                Source not available for this subject.
+                {isExternal
+                  ? "Not visible at the Investor / LP access level."
+                  : "Source not available for this subject."}
               </p>
               <p className="mt-2 text-zinc-500">
-                The atom is either not found or gated out for this access key.
-                The gate is honest: a gated-out atom is indistinguishable from
-                not-found, so no tenant-private data leaks.
+                {isExternal
+                  ? "This lineage resolves to a tenant-private operating atom. The gate withholds it from the LP view — you see the cited ground truth and the curated artifact, never Mox's operating internals."
+                  : "The atom is either not found or gated out for this access key. The gate is honest: a gated-out atom is indistinguishable from not-found, so no tenant-private data leaks."}
               </p>
               <button
                 type="button"

@@ -2,7 +2,7 @@
 
 > The rehearsal doc and the demo-day script. This was the front half of WS-7: it locked the narrative and the honesty framing before the surfaces were finalized.
 >
-> **CANONICAL-AUTHORITY NOTE (2026-06-13, asset-twin pass).** This doc remains canonical for the **framing lines** (Open / Transition / Close, below), the **confidence-chip rules**, the **differentiation thread**, and the **audience matching** — use those verbatim. For the **intent-by-intent component assembly and the surface-by-surface beat mapping**, the canonical source is now **`docs/narrative/hero_script_runsheet.md`**, which is reconciled cell-by-cell against the live engine output (POST /api/intent) and the built surfaces. Where the beat descriptions in this doc once diverged from what shipped, they have been reconciled below to match reality (notably: the spatial twin is the asset-based `/twin` surface with the live APS 3D viewer staged as a labeled drop-in slot — NOT a live 3D viewer rendering; and the five-beat arc is Yardi → spatial twin → adaptive command → investor room). If this doc and `hero_script_runsheet.md` ever conflict on assembly/surfaces again, `hero_script_runsheet.md` wins.
+> **CANONICAL-AUTHORITY NOTE (2026-06-13, iteration 2 — engine/RBAC/redaction/Sketchfab pass).** This doc remains canonical for the **framing lines** (Open / Transition / Close, below), the **confidence-chip rules**, the **differentiation thread**, and the **audience matching** — use those verbatim. For the **intent-by-intent component assembly and the surface-by-surface beat mapping**, the canonical source is **`docs/narrative/hero_script_runsheet.md`**, reconciled cell-by-cell against the live engine output (same-origin POST `/api/intent`) and the built surfaces. Iteration-2 facts that shipped, reconciled below: (1) the engine is SELF-CONTAINED via same-origin Next.js API routes (no separate backend); (2) the **as-built guided walkthrough is five beats** — **open-yardi → spatial-twin → open-unit → adaptive-command → investor-room** (`frontend/src/components/walkthrough/beats.ts`), driven by **persistent header walkthrough controls + a role switcher** on every surface; (3) the spatial twin's 3D face is a **Sketchfab rendered, navigable embed** of the proposed design (staged behind `NEXT_PUBLIC_SKETCHFAB_MODEL_ID`, graceful fallback when unset) — NOT APS, NOT live tenant data; (4) **RBAC** redacts tenant-private operating internals for the external LP role, and the **investor room adds operator redact/replace** controls. The legacy operating-first beat sketch (catch-the-leak / action-inbox) lives on the Yardi overlay + command surface and is folded into the beats below. If this doc and `hero_script_runsheet.md` ever conflict on assembly/surfaces, `hero_script_runsheet.md` wins.
 
 ## How the demo is shaped
 
@@ -34,57 +34,101 @@ Every surfaced value carries a chip with its state. In this demo everything is i
 
 Never show a bare number. Never present a representative number as earned-calibrated.
 
-## The five beats
+## The five beats (as-built guided walkthrough)
 
-### Beat 1: open on Yardi (operating)
-- Action: the demo opens on a Yardi screen (`Yardi_Property-Operations-RV35-1.png` or `Yardi_Financial-Overview-RV54-1.png`) with the intelligence layer riding on top. The overlay surfaces one in-context insight with a source and a baseline confidence chip.
-- Say: "This is your Yardi. Untouched. The same screen your team uses every day. Watch what our layer adds."
-- Answers: the rip-and-replace fear (Felicia). Nobody migrates, nobody logs into a new system.
-- Honesty: the overlay is atom-derived, not screen-scraping. Chip is baseline.
+The guided walkthrough (`frontend/src/components/walkthrough/beats.ts`) drives these
+five beats in order. The header carries persistent walkthrough controls (start / prev
+/ next / exit + beat indicator) and the role switcher on every surface, so the demo is
+always drivable. The legacy operating beats (catch-the-leak, action inbox) are not
+separate walkthrough stops — they live on the Yardi overlay and the command surface
+and are reachable as the operating story within beats 1 and 4.
 
-### Beat 2: catch the leak (operating)
-- Action: on `Yardi_Budget-Variance-RV55-1.png` / `Yardi_Expense-Analysis-RV19-1.png`, type "why is R&M high at this property this quarter?" or click the flag. The variance card assembles, surfaces the anomaly, shows the reasoning chain and the source.
-- Say: tell the real water-leak story (a trailing-twelve where water ran high for months and a human finally caught an underground off-site leak), then: "the system would have flagged that in month one, not month nine."
-- Answers: catch what humans cannot hold (Miguel).
-- Honesty: the reasoning chain and source are real structure; the chip is baseline.
+### Beat 1 — open-yardi (`/yardi`)
+- Action: open on the Yardi surface with the intelligence layer riding on top. The
+  overlay surfaces one in-context insight with a source and a baseline confidence chip
+  (atom-derived, read-only over a static screenshot). The verbatim opening line renders
+  here (`<NarrativeFrame variant="open" />`).
+- Say (verbatim, the Open line): "The engine is real. The data is representative,
+  shaped like yours. Wiring it to your Yardi is what the first phase does." Then: "This
+  is your Yardi. Untouched. Watch what our layer adds." The operating story (the
+  water-leak catch, the action inbox) lives in this overlay and the command surface.
+- Answers: the rip-and-replace fear (Felicia). Nobody migrates.
+- Honesty: the overlay is atom-derived, not screen-scraping (guardrail 4). It reads,
+  assists, and captures to our core — it never writes back into Yardi (guardrail 6).
+  Chip baseline.
 
-### Beat 3: the action inbox (operating)
-- Action: type "show me what needs my attention across the portfolio." The action inbox assembles: triaged flags, each routed by role, each with a recommendation, a confidence chip, a source, and accept / edit / reject (the `mox_01_command` "needs your call" pattern). On `Yardi_Work-Orders-RV50-1.png` the same layer pulls ABC Plumbing history, drafts a reply, and codes the invoice to deposit.
-- Say: "You do not drown in flags. You get an inbox of decisions, routed to the right person, each with its reasoning and its source."
-- Answers: what do we do with the flags, who manages them across fifty deals (Felicia).
-- Deposit-loop moment: accept or edit one item, then say: "and that correction just taught the system. It gets less wrong every month, and you own that learning." The chip stays baseline; the narration is that this is how it earns over time, on your book. Do not flip a representative number to calibrated.
-
-### Transition
-- Deliver the transition line. Switch to the Nelray hero data.
-
-### Beat 4: walk the building (deal, real data) — the spatial twin at `/twin`
-- Action: load the spatial twin at **`/twin`**. **Building view** (the active surface):
-  a hero gallery of curated renderings + exterior elevations rendered from the
-  operator's real Revit model, the **labeled APS drop-in slot** ("Live 3D model —
-  wiring on APS activation"), building-level floor plans, the composed ground-truth
-  layer (parcel / zoning / code / flood, each fact chipped + drillable), and the
-  **MF-3 entitlement finding reachable from the building level**. Then switch to
-  **Unit drill-down** ("vet the proposed building" → "open a unit"): pick a unit type,
-  click a **room chip** (Bed 1, MSTR, Kitchen, etc.) — its **floor plan + interior
-  elevation** load alongside the composed atom panel (spatial unit metadata + seeded
-  operating layer + ground-truth layer), every fact with a provenance chip.
-- Say: "This is the proposed building, the real model. Every unit is an atom. Above it sits the parcel and the code, the ground truth we bring that you could never build yourself." Then the finding: "and here is what the system caught. This is a five-story building on MF-3 land, which caps at forty feet and thirty-six units an acre. It needs a rezoning to MF-4 or a variance, flagged before you ever submit."
+### Beat 2 — spatial-twin (`/twin`, Building view)
+- Action: pull back to the proposed building. The 3D slot is a **Sketchfab rendered,
+  navigable embed** of the proposed design (or a graceful "rendered 3D model — wiring
+  up" fallback when no model id is set). Then the hero gallery of curated renderings +
+  elevations (the active asset-based twin), building-level floor plans, the composed
+  ground-truth layer (parcel / zoning / code / flood, each fact chipped + drillable),
+  and the **MF-3 entitlement finding reachable from the building level**.
+- Say (Transition line, then): "This is the proposed building, the real model. Above it
+  sits the parcel and the code, the ground truth we bring that you could never build
+  yourself." Then the finding: "a five-story building on MF-3 land, which caps at forty
+  feet and thirty-six units an acre. It needs a rezoning to MF-4 or a variance, flagged
+  before you ever submit."
 - Answers: the digital twin Miguel asked for, and the property-intelligence differentiator.
-- Honesty (RECONCILED — important): the spatial face is the **asset-based twin
-  (renderings / elevations / plans)**; the live APS SVF2 3D viewer is BLOCKED on an
-  Autodesk account-level entitlement (AUTH-001) and is staged as a **labeled drop-in
-  slot**, NOT a live 3D render — do not present the slot as a working 3D viewer. The
-  building atom and per-room geometry are **provisional pending APS extraction (WS-1
-  Part A)**, stated on-surface. Representative data; the entitlement finding carries
-  the §25-2-562 code citation and an as-of date (2026-06-13); chip baseline. Verify
-  the MF-4 (§25-2-564, 60 ft) height and variance path through the substrate before
-  showing.
+- Honesty (IMPORTANT): the 3D face is a **Sketchfab RENDERING of the proposed design**
+  — NOT APS, NOT a measured as-built, NOT live tenant data
+  (`ApsViewerSlot.tsx` / `SketchfabEmbed.tsx`). Do not present it as a live APS/Revit
+  viewer. The building atom geometry/URN and per-room geometry are **provisional pending
+  the APS Model Derivative backfill (WS-1 Part A)**, stated on-surface. The entitlement
+  finding carries the §25-2-562 code citation + as-of date (2026-06-13); chip baseline.
+  Verify the MF-4 (§25-2-564, 60 ft) height and variance path before showing.
 
-### Beat 5: generate the LP view (deal, real data)
-- Action: type "generate the LP view for this deal." The investor room assembles: hero renderings, an underwrite and return summary with a provenance chip on every number drilling to its source, the entitlement and plan-review section (the MF-3 finding plus the proposed-building review against Austin code, cited findings), and the "what an LP gets" framing.
-- Say: "This is what you hand an LP instead of a static PDF. Every number traces to its source. The code risk on the parcel is already vetted. That is jurisdictional diligence no other GP can show, and it is what lowers your cost of capital."
+### Beat 3 — open-unit (`/twin`, Unit drill-down)
+- Action: switch to Unit drill-down, pick a unit type (Typical 2BR / 1BR), and click a
+  **room chip** (Bed 1, MSTR, Kitchen, etc.) — its floor plan + interior elevation load
+  alongside the composed atom panel: spatial unit metadata + the (tenant-private)
+  operating layer + the ground-truth layer, every fact with a provenance chip + drill.
+- Say: "Every unit is an atom. Click in and you walk it room by room — the space, its
+  operating layer, and the ground truth stacked above it, each fact carrying its source."
+- Honesty: plan/elevation imagery is curated Revit export, NOT a live 3D view; room
+  geometry is provisional pending APS extraction. The operating layer is representative
+  seed, tenant-private, never pooled — and is **RBAC-gated** (`RoleGate
+  resource="operating-internals"`), so switching the header role to LP blacks it out
+  while the space + ground truth stay.
+
+### Beat 4 — adaptive-command (`/command`)
+- Action: type an intent; the engine selects, orders, and populates components live,
+  each carrying provenance + confidence. The action inbox routes flags by role.
+- Deposit-loop moment: accept or edit one flagged item, then: "and that correction just
+  taught the system. It gets less wrong every month, and you own that learning." The
+  chip stays baseline; the loop records a SIGNAL (client-accumulated, stateless), it
+  does NOT relabel a number as calibrated (guardrail 2).
+- RBAC moment: switch the header role to Investor / LP and the operating / financial
+  views visibly redact (`RoleGate`), while public ground truth + the investor rollup
+  stay. Say: "Mox controls who sees what — an external partner never sees the operating
+  internals."
+- Answers: catch what humans cannot hold (Miguel); who manages the flags across the
+  portfolio (Felicia).
+- Honesty: reasoning chain + source are real structure; chips baseline; no write-back.
+
+### Beat 5 — investor-room (`/investor`)
+- Action: "generate the LP view for this deal." The room assembles (live, same-origin
+  engine): hero renderings, the underwrite / return summary (a provenance chip on every
+  number, each drilling to source), the MF-3 entitlement / plan-review section, and the
+  de-risking ledger.
+- Redaction moment (operator): use the per-field Show / Redact / Replace controls to
+  redact or replace a sensitive line — e.g. replace the list price with the
+  representative band `~$4–5M`, or the exact address with "North Loop, Austin TX".
+- Role-switch moment (preview as LP): switch the header role to Investor / LP. Redacted
+  fields black out; replaced fields show the representative substitute with an amber
+  "representative" chip; operating internals redact. "This is exactly what the LP
+  receives — the curated, cited view, never tenant-private operating internals."
+- Say: "This is what you hand an LP instead of a static PDF. Every number traces to its
+  source. The code risk on the parcel is already vetted — jurisdictional diligence no
+  other GP can show, and it is what lowers your cost of capital."
 - Answers: land more investors, provable not asserted (Miguel and Sean).
-- Honesty: a generated, cited artifact, not the live revocable LP room (gated on the auth build). We provide the provenance infrastructure; the GP makes the representations. Do not present it as certifying returns.
+- Honesty: a generated, cited artifact, not the live revocable LP room (gated on the
+  auth build). We provide the provenance infrastructure; the GP makes the
+  representations. Do not present it as certifying returns. Replace values are always
+  clearly representative (ranges / rounded / labeled), never a fabricated exact figure.
+  Presenter caveat: the lineage drill on the underwrite is currently role-blind (see
+  honesty audit FIX-NEEDED #1) — avoid drilling the pro-forma atom while in LP role
+  until that ships.
 
 ### Close
 - Deliver the close line.
