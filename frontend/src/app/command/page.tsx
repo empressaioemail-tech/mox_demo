@@ -1,3 +1,7 @@
+import { ContentContainer } from "@/components/shell";
+import { WalkthroughNarration } from "@/components/walkthrough";
+import { NarrativeFrame } from "@/components/library";
+import { HEADLINES } from "@/content/mox";
 import { CommandSurface } from "@/components/command/CommandSurface";
 
 export const metadata = {
@@ -8,26 +12,38 @@ export const metadata = {
 
 export default function CommandPage() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12">
+    // Full-screen surface: the app shell owns the background + sticky header;
+    // ContentContainer scales the content from laptop to projector (no narrow
+    // max-w-3xl boxing).
+    <ContentContainer width="wide">
+      <div className="flex flex-col gap-6">
+        {/* Walkthrough narration for the "adaptive-command" beat — renders only
+            when the guided walkthrough is active on /command. */}
+        <WalkthroughNarration onlyOnSurface="/command" />
+
         <header className="space-y-2">
           <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">
-            Adaptive command
+            Adaptive command · the operator&apos;s single surface
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-semibold tracking-tight">
             Express intent — the surface assembles itself
           </h1>
-          <p className="max-w-2xl text-sm leading-relaxed text-zinc-400">
-            The engine is real. The data is representative, shaped like yours.
-            Type an intent and the engine selects, orders, and binds the
-            components — every number carrying its provenance and its confidence
-            state. Correct anything via the deposit loop and the surface reacts:
-            the earning loop is live.
+          <p className="max-w-3xl text-sm leading-relaxed text-zinc-400">
+            One surface across Manage, Invest, and Build. Type an intent and the
+            engine selects, orders, and binds the components live — every number
+            carrying its provenance and its confidence state, each assembled view
+            tied to where in an arm it saves money. Correct anything via the
+            deposit loop and the surface reacts: the earning loop is live.
+          </p>
+          <p className="max-w-3xl text-sm font-medium text-zinc-300">
+            {HEADLINES.os}
           </p>
         </header>
 
+        <NarrativeFrame variant="open" />
+
         <CommandSurface />
-      </main>
-    </div>
+      </div>
+    </ContentContainer>
   );
 }

@@ -21,6 +21,21 @@ export interface AssistAction {
   detail: string;
 }
 
+/**
+ * The Manage cost-driver framing for a beat — the bottom-line story.
+ * Each Yardi screen maps to a controllable-opex leak the intelligence catches
+ * (one of ARM_MANAGE.costDrivers / leakPoints) and what catching it saves.
+ * Figures are REPRESENTATIVE (render REPRESENTATIVE_DATA_NOTE alongside).
+ */
+export interface CostDriverFraming {
+  /** The controllable cost driver this beat sits on (ARM_MANAGE.costDrivers). */
+  driver: string;
+  /** The leak the intelligence catches on this screen (ARM_MANAGE.leakPoints). */
+  leak: string;
+  /** What catching it saves — the bottom-line, representative. */
+  saves: string;
+}
+
 export interface CaptureSpan {
   key: string;
   value: string;
@@ -37,6 +52,11 @@ export interface YardiBeat {
   /** The "following you" context line — what Mox sees you doing. */
   context: string;
   beatKind: BeatKind;
+  /**
+   * The Manage cost-driver framing — maps this Yardi screen to a controllable
+   * -opex leak and what catching it saves (the bottom-line story).
+   */
+  costDriver: CostDriverFraming;
   /** What this work item belongs to (the "this belongs to" link card). */
   belongsTo?: { label: string; meta: string };
   /** Assist actions — the assist that earns the capture. */
@@ -83,6 +103,12 @@ export const YARDI_BEATS: YardiBeat[] = [
     tab: "Yardi · Work Orders",
     context: "Reading a vendor work order with ABC Plumbing",
     beatKind: "work-order",
+    costDriver: {
+      driver: "Repairs & maintenance (R&M)",
+      leak: "Vendor-invoice coding — invoices coded correctly and to the right account, not miscoded into the wrong line at close.",
+      saves:
+        "Correct coding the first time keeps R&M from leaking into the wrong account, and the master-rate check stops overbilling — part of the 18–23% reduction in controllable line items.",
+    },
     belongsTo: {
       label: "ABC Plumbing — open work order",
       meta: "plumbing · R&M · vendor on master rate",
@@ -133,6 +159,12 @@ export const YARDI_BEATS: YardiBeat[] = [
     tab: "Yardi · Budget Variance",
     context: "Reviewing a budget-variance line that runs hot",
     beatKind: "variance",
+    costDriver: {
+      driver: "Common-area utilities",
+      leak: "Water-leak catch — a common-area water/sewer line running hot, caught in month one instead of month nine.",
+      saves:
+        "Catching a utilities anomaly early — rather than nine months of leaked water billed to the property — is exactly where the controllable-line reduction shows up at close.",
+    },
     assists: [
       {
         label: "Explain the variance",
@@ -176,6 +208,12 @@ export const YARDI_BEATS: YardiBeat[] = [
     tab: "Yardi · Expense Analysis",
     context: "Scanning expense analysis for the controllable lines",
     beatKind: "variance",
+    costDriver: {
+      driver: "Turnover & make-ready",
+      leak: "Turnover-band flag — units drifting outside the make-ready cost band, surfaced against the owned-book pattern.",
+      saves:
+        "Flagging make-ready spend that drifts outside the band keeps turnover cost in line with the underwrite — another controllable line the engine holds down at close.",
+    },
     assists: [
       {
         label: "Flag the anomalous line",
@@ -218,6 +256,12 @@ export const YARDI_BEATS: YardiBeat[] = [
     tab: "Yardi · Financial Overview",
     context: "Viewing the financial overview",
     beatKind: "kpi",
+    costDriver: {
+      driver: "Contract services",
+      leak: "Vendors missing SLA — contract-service performance flagged against the agreement, in context on the KPI read.",
+      saves:
+        "Surfacing the close cycle and contract-service SLA in context means the controllable lines stay visible while they can still be acted on, not discovered after close.",
+    },
     assists: [
       {
         label: "Surface the underwrite KPIs",
@@ -256,6 +300,12 @@ export const YARDI_BEATS: YardiBeat[] = [
     tab: "Yardi · Property Operations",
     context: "Viewing property operations",
     beatKind: "kpi",
+    costDriver: {
+      driver: "On-site payroll & marketing",
+      leak: "Staffing and marketing read in context — the controllable people/leasing lines surfaced against the operating pattern, each with its state.",
+      saves:
+        "Keeping on-site payroll and marketing visible against the operating pattern is how those controllable lines stay inside the 18–23% reduction story.",
+    },
     assists: [
       {
         label: "Surface the operating KPIs",

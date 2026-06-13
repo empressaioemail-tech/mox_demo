@@ -1,15 +1,19 @@
 "use client";
 
 /**
- * BuildingView — the spatial face of the proposed 5-story building. Hero gallery
- * of curated renderings + exterior elevations (the active asset-based twin),
- * the labeled APS drop-in slot (the future live-3D upgrade in the same spot),
- * building-level orientation floor plans, the composed ground-truth layer, and
- * the MF-3 entitlement finding reachable from the building level.
+ * BuildingView — the spatial face of the proposed 5-story building. The 3D slot
+ * (Sketchfab rendered model when configured, graceful fallback otherwise) leads,
+ * then a hero gallery of curated renderings + exterior elevations (the active
+ * asset-based twin), building-level orientation floor plans, the composed
+ * ground-truth layer, and the MF-3 entitlement finding — the BLDR bottom-line win.
+ *
+ * Building-level layers reveal in a staggered, intentional sequence
+ * (AssemblingSequence) so the surface assembles itself rather than popping in.
  */
 
 import { useState } from "react";
 import { ConfidenceChip } from "@/components/library";
+import { AssemblingSequence } from "@/components/adaptive";
 import { ApsViewerSlot } from "@/components/aps/ApsViewerSlot";
 import { DrillLink } from "./LocalAtomDrill";
 import { GroundTruthLayer } from "./GroundTruthLayer";
@@ -29,7 +33,12 @@ export function BuildingView({ onOpenUnit }: { onOpenUnit?: () => void }) {
   };
 
   return (
-    <div className="space-y-6">
+    <AssemblingSequence className="space-y-6" step={0.12} max={0.9}>
+      {/* The 3D model slot — Sketchfab rendered model (or graceful fallback) */}
+      <section className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
+        <ApsViewerSlot apsModelUrn={p.spatialRef.apsModelUrn} />
+      </section>
+
       {/* Hero gallery — the active asset-based twin */}
       <section className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -84,14 +93,9 @@ export function BuildingView({ onOpenUnit }: { onOpenUnit?: () => void }) {
         <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
           Curated, optimized renderings and elevations from the operator-controlled
           Revit model (5&nbsp;Story&nbsp;Apartment.rvt). The full model and the bulk
-          image set remain private and uncommitted. This asset-based twin is the
-          active spatial face — it is NOT a live APS/Revit viewer.
+          image set remain private and uncommitted. These are renderings of the
+          proposed design — the click-to-source atom layer below carries the data.
         </p>
-      </section>
-
-      {/* The APS drop-in slot — the future live-3D upgrade in the same spot */}
-      <section>
-        <ApsViewerSlot apsModelUrn={p.spatialRef.apsModelUrn} />
       </section>
 
       {/* Building-level orientation floor plans */}
@@ -126,6 +130,6 @@ export function BuildingView({ onOpenUnit }: { onOpenUnit?: () => void }) {
 
       {/* The hero entitlement finding, reachable from the building level */}
       <EntitlementFinding />
-    </div>
+    </AssemblingSequence>
   );
 }

@@ -45,6 +45,16 @@ export function ContextFrame({ surface }: { surface: ContextSurface }) {
         </span>
       </header>
 
+      {/* Arm framing strip — ties this surface to its place in the Mox OS. */}
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-zinc-800/70 bg-zinc-900/40 px-6 py-2">
+        <span className="rounded-full border border-zinc-700/80 bg-zinc-900 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+          {surface.framing.arm}
+        </span>
+        <span className="text-xs leading-relaxed text-zinc-500">
+          {surface.framing.note}
+        </span>
+      </div>
+
       <iframe
         src={surface.file}
         title={`${surface.name} — Mox context surface`}

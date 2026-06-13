@@ -12,6 +12,7 @@
  */
 
 import type { AssembledComponent, CalibrationSummary } from "@/lib/engine";
+import { RoleGate } from "@/components/rbac";
 import {
   ConfidenceChipRow,
   LeadConfidenceChip,
@@ -24,6 +25,7 @@ import {
   ProvenanceList,
   SeverityPill,
 } from "./primitives";
+import { armMetaFor, type ComponentArmMeta } from "./arms";
 
 type RendererProps = {
   component: AssembledComponent;
@@ -521,6 +523,71 @@ function RawFallback({ component }: RendererProps) {
   );
 }
 
+// ---- arm framing + RBAC frame ----------------------------------------------
+
+/** A small chip naming the Mox arm + cost driver an assembled view speaks to. */
+function ArmChip({ meta }: { meta: ComponentArmMeta }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-300"
+      title={meta.costDriver}
+    >
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-sky-400/80" />
+      {meta.armLabel}
+    </span>
+  );
+}
+
+/** The bottom-line footer: which cost driver this view bears on, where it saves. */
+function BottomLineFooter({ meta }: { meta: ComponentArmMeta }) {
+  return (
+    <p className="mt-3 border-t border-zinc-800 pt-2 text-[11px] leading-relaxed text-zinc-500">
+      <span className="font-medium text-zinc-400">Bottom line · {meta.armLabel}:</span>{" "}
+      {meta.bottomLine}
+      <span className="mt-0.5 block text-zinc-600">
+        Cost driver: {meta.costDriver}. Figures representative.
+      </span>
+    </p>
+  );
+}
+
+/**
+ * Frames a rendered component: an arm chip + cost-driver caption above, the
+ * bottom-line footer below. Tenant-private operating views are wrapped in a
+ * RoleGate on their governing resource, so switching the header role to LP
+ * visibly redacts them — Mox controls who sees what.
+ */
+function FramedComponent({
+  meta,
+  children,
+}: {
+  meta: ComponentArmMeta;
+  children: React.ReactNode;
+}) {
+  const body = (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <ArmChip meta={meta} />
+        <span className="text-[11px] text-zinc-500">{meta.costDriver}</span>
+      </div>
+      {children}
+      <BottomLineFooter meta={meta} />
+    </div>
+  );
+
+  if (!meta.tenantPrivate) return body;
+
+  return (
+    <RoleGate
+      resource={meta.resource}
+      redact
+      redactLabel={`${meta.armLabel} · operating-internal — redacted`}
+    >
+      {body}
+    </RoleGate>
+  );
+}
+
 // ---- dispatcher ------------------------------------------------------------
 
 const RENDERERS: Record<string, (p: RendererProps) => React.ReactNode> = {
@@ -536,5 +603,10 @@ const RENDERERS: Record<string, (p: RendererProps) => React.ReactNode> = {
 
 export function ComponentRenderer(props: RendererProps) {
   const Renderer = RENDERERS[props.component.componentKind] ?? RawFallback;
-  return <>{Renderer(props)}</>;
+  const meta = armMetaFor(props.component.componentKind);
+  return (
+    <FramedComponent meta={meta}>
+      {Renderer(props)}
+    </FramedComponent>
+  );
 }

@@ -15,9 +15,12 @@
 
 import { useState } from "react";
 import { ConfidenceChip } from "@/components/library";
+import { getArm, REPRESENTATIVE_DATA_NOTE } from "@/content/mox";
 import { DrillLink } from "./LocalAtomDrill";
 import { entitlementFinding, code562, code564, toChipState } from "./atoms";
 import { recordCalibration, engineConfigured } from "./engineClient";
+
+const BUILD = getArm("build");
 
 type Action = "accept" | "edit" | "reject";
 
@@ -65,6 +68,12 @@ export function EntitlementFinding() {
             </span>
           </div>
           <h3 className="mt-2 text-lg font-semibold text-zinc-100">{p.headline}</h3>
+          <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-amber-300/80">
+            <span className="rounded border border-amber-900/50 bg-amber-950/40 px-1.5 py-0.5 text-amber-200">
+              {BUILD?.fullName ?? "BLDR by Mox"}
+            </span>
+            <span className="text-zinc-500">· the build-arm bottom line</span>
+          </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           <ConfidenceChip
@@ -115,6 +124,38 @@ export function EntitlementFinding() {
       <p className="mt-3 font-mono text-[10px] text-zinc-500">
         as-of {p.asOfDate} · {conf.chipLabel ?? "Confidence: baseline (provenance-backed)"}
       </p>
+
+      {/* ---- BLDR bottom-line framing: the catch maps to the build cost drivers ---- */}
+      <div className="mt-4 rounded-lg border border-amber-900/40 bg-amber-950/20 p-3">
+        <p className="text-[11px] uppercase tracking-wide text-amber-300/80">
+          Why this is the {BUILD?.name ?? "BLDR"} win
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-zinc-300">
+          {BUILD?.bottomLineImpact ??
+            "Flagging the entitlement gap before submission avoids months of resubmission and carrying cost — the largest swing on the build cost drivers."}
+        </p>
+        {BUILD && (
+          <ul className="mt-2 flex flex-wrap gap-1.5">
+            {BUILD.costDrivers.map((d) => (
+              <li
+                key={d}
+                className={[
+                  "rounded border px-2 py-0.5 text-[11px]",
+                  d.toLowerCase().includes("carrying")
+                    ? "border-amber-800/60 bg-amber-950/40 text-amber-200"
+                    : "border-zinc-800 bg-zinc-950/60 text-zinc-400",
+                ].join(" ")}
+              >
+                {d}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="mt-2 text-[10px] leading-relaxed text-zinc-500">
+          Caught on the spatial twin, at the building level, before a dollar of
+          carrying cost is committed — not months into plan review. {REPRESENTATIVE_DATA_NOTE}
+        </p>
+      </div>
 
       {/* ---- Deposit loop ---- */}
       <div className="mt-4 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">

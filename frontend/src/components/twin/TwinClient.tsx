@@ -9,6 +9,7 @@
  */
 
 import { useState } from "react";
+import { WalkthroughNarration } from "@/components/walkthrough";
 import { BuildingView } from "./BuildingView";
 import { UnitDrilldown } from "./UnitDrilldown";
 
@@ -19,6 +20,9 @@ export function TwinClient() {
 
   return (
     <div className="space-y-6">
+      {/* Walkthrough narration — the "spatial-twin" and "open-unit" beats both
+          live on /twin; the card renders the active beat's prose. */}
+      <WalkthroughNarration onlyOnSurface="/twin" />
       <div className="flex gap-1 rounded-lg border border-zinc-800 bg-zinc-900/60 p-1">
         <button
           type="button"

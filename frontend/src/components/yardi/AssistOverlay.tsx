@@ -21,6 +21,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { ConfidenceChip } from "@/components/library";
 import { EngineConfidenceChip } from "@/components/command/confidence";
+import { AdaptiveReveal, AssemblingSequence } from "@/components/adaptive";
+import { RoleGate } from "@/components/rbac";
+import { REPRESENTATIVE_DATA_NOTE } from "@/content/mox";
 import {
   recordCalibration,
   submitIntent,
@@ -122,10 +125,25 @@ export function AssistOverlay({ beat }: { beat: YardiBeat }) {
     }
   }
 
+  const confidenceChip = live?.confidence ? (
+    <EngineConfidenceChip confidence={live.confidence} />
+  ) : (
+    <ConfidenceChip
+      state="baseline"
+      value={beat.fallback.confidenceValue}
+      title={beat.fallback.confidenceLabel}
+    />
+  );
+
   return (
-    <div className="w-[360px] max-w-full overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/95 shadow-2xl shadow-black/60 backdrop-blur">
-      {/* Header — logo mark + "following you" pulse */}
-      <header className="flex items-center gap-2.5 border-b border-zinc-800 bg-gradient-to-b from-zinc-800/80 to-zinc-900 px-4 py-3">
+    // The panel is a clean flex column: a static header, a scroll-only-if-needed
+    // body, and a pinned footer. No fixed height is forced here — the parent
+    // stage caps the height and this column scrolls its body, so nothing clips
+    // or overflows at full-screen or on smaller widths.
+    <div className="flex max-h-full w-full flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900/95 shadow-2xl shadow-black/60 backdrop-blur">
+      {/* Header — logo mark + "following you" pulse. Always present: the assist
+          is already there; what reveals adaptively is what it NOTICED. */}
+      <header className="flex shrink-0 items-center gap-2.5 border-b border-zinc-800 bg-gradient-to-b from-zinc-800/80 to-zinc-900 px-4 py-3">
         <span className="grid h-7 w-7 place-items-center rounded-lg bg-zinc-100 font-mono text-[11px] font-bold text-zinc-900">
           M
         </span>
@@ -136,147 +154,188 @@ export function AssistOverlay({ beat }: { beat: YardiBeat }) {
         </span>
       </header>
 
-      <div className="space-y-3 px-4 py-3.5">
-        {/* Context line — what Mox sees you doing */}
+      {/* Body reveals in sequence (replayKey={beat.slug} re-runs the assembly on
+          every screen switch): the assist NOTICES the work, then the insight,
+          then the assist actions + draft appear one-by-one — the "magical" feel. */}
+      <AssemblingSequence
+        replayKey={beat.slug}
+        base={0.05}
+        step={0.12}
+        className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-3.5"
+      >
+        {/* Context line — what Mox sees you doing (the "notice") */}
         <p className="flex items-center gap-2 text-xs text-zinc-400">
           <span className="h-1.5 w-1.5 rounded-full bg-zinc-600" />
           {beat.context}
         </p>
 
-        {/* "This belongs to" link card (work order beat) */}
-        {beat.belongsTo && (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-3">
-            <p className="text-[11px] text-zinc-500">This belongs to</p>
-            <p className="mt-0.5 text-sm font-semibold text-zinc-100">
-              {beat.belongsTo.label}
-            </p>
-            <p className="mt-1 font-mono text-[10px] text-zinc-500">
-              {beat.belongsTo.meta}
-            </p>
-          </div>
-        )}
+        {/* Everything below is tenant-private operating data. An LP role sees it
+            redacted — Mox controls who sees what. */}
+        <RoleGate
+          resource="operating-internals"
+          redact
+          redactLabel="Operating internals"
+        >
+          <div className="space-y-3">
+            {/* "This belongs to" link card (work order beat) */}
+            {beat.belongsTo && (
+              <div className="rounded-xl border border-zinc-800 bg-zinc-950/50 p-3">
+                <p className="text-[11px] text-zinc-500">This belongs to</p>
+                <p className="mt-0.5 text-sm font-semibold text-zinc-100">
+                  {beat.belongsTo.label}
+                </p>
+                <p className="mt-1 break-words font-mono text-[10px] text-zinc-500">
+                  {beat.belongsTo.meta}
+                </p>
+              </div>
+            )}
 
-        {/* The atom-derived intelligence (live or fallback) with source + confidence */}
-        <div className="rounded-xl border border-sky-900/50 bg-sky-950/20 p-3">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium text-sky-100">
-              {live?.headline ?? beat.fallback.headline}
-            </p>
-            {live?.confidence ? (
-              <EngineConfidenceChip confidence={live.confidence} />
-            ) : (
-              <ConfidenceChip
-                state="baseline"
-                value={beat.fallback.confidenceValue}
-                title={beat.fallback.confidenceLabel}
-              />
+            {/* The atom-derived intelligence (live or fallback) with source + confidence */}
+            <div className="rounded-xl border border-sky-900/50 bg-sky-950/20 p-3">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <p className="min-w-0 flex-1 text-sm font-medium text-sky-100">
+                  {live?.headline ?? beat.fallback.headline}
+                </p>
+                <span className="shrink-0">{confidenceChip}</span>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">
+                {live?.reasoning ?? beat.fallback.reasoning}
+              </p>
+              <p className="mt-2 break-words border-t border-sky-900/40 pt-2 text-[11px] leading-relaxed text-zinc-500">
+                <span className="font-mono uppercase tracking-wide text-zinc-600">
+                  source ·{" "}
+                </span>
+                {sourceLine}
+                {liveError && (
+                  <span className="ml-1 text-amber-400">
+                    (engine offline — fallback)
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Manage cost-driver framing — the bottom-line story: this screen
+                maps to a controllable-opex leak the intelligence catches. */}
+            <div className="rounded-xl border border-amber-900/40 bg-amber-950/15 p-3">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-amber-300/90">
+                Controllable opex · {beat.costDriver.driver}
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">
+                <span className="font-medium text-amber-100">Leak caught: </span>
+                {beat.costDriver.leak}
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">
+                {beat.costDriver.saves}
+              </p>
+              <p className="mt-2 text-[10px] leading-snug text-zinc-600">
+                {REPRESENTATIVE_DATA_NOTE}
+              </p>
+            </div>
+
+            {/* Assist actions — the assist earns the capture */}
+            <div>
+              <p className="mb-1.5 font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                Assist
+              </p>
+              <div className="space-y-1.5">
+                {beat.assists.map((a, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveAssist(activeAssist === i ? null : i)}
+                    className={[
+                      "flex w-full items-start gap-2 rounded-lg border px-3 py-2 text-left text-xs transition",
+                      activeAssist === i
+                        ? "border-zinc-500 bg-zinc-800 text-zinc-100"
+                        : "border-zinc-800 bg-zinc-950/40 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-800/60",
+                    ].join(" ")}
+                  >
+                    <span className="mt-px shrink-0 text-zinc-500">›</span>
+                    <span className="min-w-0">{a.label}</span>
+                  </button>
+                ))}
+              </div>
+              {activeAssist !== null && (
+                <AdaptiveReveal variant="rise" duration={0.3}>
+                  <p className="mt-2 rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs leading-relaxed text-zinc-300">
+                    {beat.assists[activeAssist].detail}
+                  </p>
+                </AdaptiveReveal>
+              )}
+            </div>
+
+            {/* Drafted reply (work order beat) */}
+            {beat.draftReply && (
+              <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
+                <p className="mb-1.5 font-mono text-[9px] uppercase tracking-widest text-emerald-300">
+                  Drafted reply
+                </p>
+                <p className="text-xs leading-relaxed text-zinc-200">
+                  {beat.draftReply}
+                </p>
+                <p className="mt-2 text-[10px] leading-snug text-zinc-600">
+                  Draft assist only — sending happens in your mail client. Mox
+                  does not write back into Yardi.
+                </p>
+              </div>
             )}
           </div>
-          <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">
-            {live?.reasoning ?? beat.fallback.reasoning}
-          </p>
-          <p className="mt-2 border-t border-sky-900/40 pt-2 text-[11px] text-zinc-500">
-            <span className="font-mono uppercase tracking-wide text-zinc-600">
-              source ·{" "}
-            </span>
-            {sourceLine}
-            {liveError && (
-              <span className="ml-1 text-amber-400">(engine offline — fallback)</span>
-            )}
-          </p>
-        </div>
+        </RoleGate>
+      </AssemblingSequence>
 
-        {/* Assist actions — the assist earns the capture */}
-        <div>
-          <p className="mb-1.5 font-mono text-[9px] uppercase tracking-widest text-zinc-500">
-            Assist
-          </p>
-          <div className="space-y-1.5">
-            {beat.assists.map((a, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveAssist(activeAssist === i ? null : i)}
-                className={[
-                  "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-xs transition",
-                  activeAssist === i
-                    ? "border-zinc-500 bg-zinc-800 text-zinc-100"
-                    : "border-zinc-800 bg-zinc-950/40 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-800/60",
-                ].join(" ")}
-              >
-                <span className="text-zinc-500">›</span>
-                {a.label}
-              </button>
-            ))}
+      {/* Capture-to-core footer — assist-first, our core only. Pinned (shrink-0)
+          so it never scrolls out of view; gated as operating internals. */}
+      <div className="shrink-0 border-t border-zinc-800 bg-zinc-950/60 px-4 py-3">
+        <RoleGate
+          resource="operating-internals"
+          redact
+          redactLabel="Capture to core"
+        >
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-zinc-100">
+                {captureState === "captured"
+                  ? "Captured to your core"
+                  : beat.captureTitle}
+              </p>
+              <p className="text-[10px] text-zinc-500">{beat.captureSub}</p>
+            </div>
+            <div className="ml-auto shrink-0 text-right font-mono text-[9px] leading-snug text-zinc-600">
+              private to Mox
+              <br />
+              never pooled
+            </div>
           </div>
-          {activeAssist !== null && (
-            <p className="mt-2 rounded-lg border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs leading-relaxed text-zinc-300">
-              {beat.assists[activeAssist].detail}
+
+          {captureState !== "captured" ? (
+            <button
+              type="button"
+              onClick={capture}
+              disabled={captureState === "saving"}
+              className="mt-2.5 w-full rounded-lg bg-zinc-100 px-3 py-2 text-xs font-semibold text-zinc-900 transition hover:bg-white disabled:opacity-50"
+            >
+              {captureState === "saving"
+                ? "Capturing…"
+                : "Capture to core (deposit loop)"}
+            </button>
+          ) : (
+            <p className="mt-2.5 rounded-lg border border-emerald-900/50 bg-emerald-950/30 px-3 py-2 text-[11px] text-emerald-200">
+              {signalLabel ?? "Recorded — earning loop live."}
             </p>
           )}
-        </div>
 
-        {/* Drafted reply (work order beat) */}
-        {beat.draftReply && (
-          <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
-            <p className="mb-1.5 font-mono text-[9px] uppercase tracking-widest text-emerald-300">
-              Drafted reply
-            </p>
-            <p className="text-xs leading-relaxed text-zinc-200">
-              {beat.draftReply}
-            </p>
-            <p className="mt-2 text-[10px] text-zinc-600">
-              Draft assist only — sending happens in your mail client. Mox does
-              not write back into Yardi.
-            </p>
+          {/* The captured atom spans */}
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {beat.captureSpans.map((s) => (
+              <span
+                key={s.key}
+                className="rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-0.5 font-mono text-[9px] text-zinc-300"
+              >
+                {s.key}: {s.value}
+              </span>
+            ))}
           </div>
-        )}
-      </div>
-
-      {/* Capture-to-core footer — assist-first, our core only */}
-      <div className="border-t border-zinc-800 bg-zinc-950/60 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="text-xs font-semibold text-zinc-100">
-              {captureState === "captured" ? "Captured to your core" : beat.captureTitle}
-            </p>
-            <p className="text-[10px] text-zinc-500">{beat.captureSub}</p>
-          </div>
-          <div className="ml-auto text-right font-mono text-[9px] leading-snug text-zinc-600">
-            private to Mox
-            <br />
-            never pooled
-          </div>
-        </div>
-
-        {captureState !== "captured" ? (
-          <button
-            type="button"
-            onClick={capture}
-            disabled={captureState === "saving"}
-            className="mt-2.5 w-full rounded-lg bg-zinc-100 px-3 py-2 text-xs font-semibold text-zinc-900 transition hover:bg-white disabled:opacity-50"
-          >
-            {captureState === "saving"
-              ? "Capturing…"
-              : "Capture to core (deposit loop)"}
-          </button>
-        ) : (
-          <p className="mt-2.5 rounded-lg border border-emerald-900/50 bg-emerald-950/30 px-3 py-2 text-[11px] text-emerald-200">
-            {signalLabel ?? "Recorded — earning loop live."}
-          </p>
-        )}
-
-        {/* The captured atom spans */}
-        <div className="mt-2.5 flex flex-wrap gap-1.5">
-          {beat.captureSpans.map((s) => (
-            <span
-              key={s.key}
-              className="rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-0.5 font-mono text-[9px] text-zinc-300"
-            >
-              {s.key}: {s.value}
-            </span>
-          ))}
-        </div>
+        </RoleGate>
       </div>
     </div>
   );

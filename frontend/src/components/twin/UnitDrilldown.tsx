@@ -7,12 +7,23 @@
  * layer (operating atom), and the ground-truth layer (parcel/zoning/code). Every
  * fact carries a ConfidenceChip (guardrail 1) and a DrillLink (provenance).
  *
+ * THE "MAGICAL" REVEAL: selecting a room replays an AssemblingSequence keyed on
+ * the room (+ unit). The room plan reveals first, then the interior elevation,
+ * then the composed atom panel — staggered and intentional, not all at once.
+ * Respects prefers-reduced-motion (collapses to instant).
+ *
+ * RBAC: the seeded operating layer is tenant-private — wrapped in
+ * <RoleGate resource="operating-internals" redact> so switching to the external
+ * LP role visibly redacts it. twin-spatial + ground-truth stay visible to the LP.
+ *
  * Room names come straight from the unit atoms (Bed 1, Bed 2, MSTR, Kitchen,
  * Living, Baths). 1BR omits Bed 1 / Bed 2; the room grid reflects the atom.
  */
 
 import { useState } from "react";
 import { ConfidenceChip } from "@/components/library";
+import { AdaptiveReveal } from "@/components/adaptive";
+import { RoleGate } from "@/components/rbac";
 import { DrillLink } from "./LocalAtomDrill";
 import { OperatingLayer } from "./OperatingLayer";
 import { GroundTruthLayer } from "./GroundTruthLayer";
@@ -43,6 +54,13 @@ export function UnitDrilldown() {
   const roomKey = activeRoom?.name ?? "Living";
   const imagery = ROOM_IMAGES[roomKey] ?? { plan: undefined, elevations: [] };
   const unitPayload = unit.payload as { name: string; unitType: string };
+
+  // Re-keys the staggered reveal so it replays each time the room (or unit)
+  // changes — the room's plan, then its elevation, then the composed panel.
+  const replayKey = `${unit.atomId}:${roomKey}`;
+
+  // Each block reveals on its own beat; index drives the stagger delay.
+  let beat = 0;
 
   return (
     <section className="space-y-4">
@@ -109,36 +127,42 @@ export function UnitDrilldown() {
               <DrillLink atomId={unit.atomId} label="unit atom" />
             </div>
 
+            {/* Beat 1 — the room plan reveals first */}
             {imagery.plan && (
-              <figure className="mt-3">
-                <div className="overflow-hidden rounded-lg border border-zinc-800 bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imagery.plan.src}
-                    alt={imagery.plan.alt}
-                    className="aspect-[4/3] w-full object-contain"
-                    loading="lazy"
-                  />
-                </div>
-                <figcaption className="mt-1.5 text-xs text-zinc-400">
-                  {imagery.plan.caption}
-                </figcaption>
-              </figure>
+              <AdaptiveReveal key={`${replayKey}-plan`} index={beat++} step={0.14} variant="rise">
+                <figure className="mt-3">
+                  <div className="overflow-hidden rounded-lg border border-zinc-800 bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imagery.plan.src}
+                      alt={imagery.plan.alt}
+                      className="aspect-[4/3] w-full object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption className="mt-1.5 text-xs text-zinc-400">
+                    {imagery.plan.caption}
+                  </figcaption>
+                </figure>
+              </AdaptiveReveal>
             )}
 
+            {/* Beat 2 — the interior elevation(s) follow */}
             {imagery.elevations.map((el) => (
-              <figure key={el.src} className="mt-3">
-                <div className="overflow-hidden rounded-lg border border-zinc-800 bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={el.src}
-                    alt={el.alt}
-                    className="aspect-[4/3] w-full object-contain"
-                    loading="lazy"
-                  />
-                </div>
-                <figcaption className="mt-1.5 text-xs text-zinc-400">{el.caption}</figcaption>
-              </figure>
+              <AdaptiveReveal key={`${replayKey}-${el.src}`} index={beat++} step={0.14} variant="rise">
+                <figure className="mt-3">
+                  <div className="overflow-hidden rounded-lg border border-zinc-800 bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={el.src}
+                      alt={el.alt}
+                      className="aspect-[4/3] w-full object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                  <figcaption className="mt-1.5 text-xs text-zinc-400">{el.caption}</figcaption>
+                </figure>
+              </AdaptiveReveal>
             ))}
 
             <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
@@ -148,43 +172,63 @@ export function UnitDrilldown() {
             </p>
           </div>
 
-          {/* Spatial unit metadata (from the unit atom) */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
-            <div className="flex items-center justify-between gap-2">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                Spatial unit metadata
+          {/* Beat 3 — spatial unit metadata (from the unit atom) */}
+          <AdaptiveReveal key={`${replayKey}-meta`} index={beat++} step={0.14} variant="rise">
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                  Spatial unit metadata
+                </p>
+                <ConfidenceChip
+                  state={toChipState(unit.confidence.state)}
+                  value={unit.confidence.value}
+                  title={unit.confidence.stateNote}
+                />
+              </div>
+              <p className="mt-2 text-sm font-medium text-zinc-100">{unitPayload.name}</p>
+              <p className="text-xs text-zinc-500">{unitPayload.unitType}</p>
+              <ul className="mt-2 flex flex-wrap gap-1.5">
+                {rooms.map((r) => (
+                  <li
+                    key={r.name}
+                    className={[
+                      "rounded border px-2 py-0.5 text-[11px]",
+                      r.name === roomKey
+                        ? "border-sky-700 bg-sky-950/40 text-sky-100"
+                        : "border-zinc-800 bg-zinc-950/60 text-zinc-300",
+                    ].join(" ")}
+                  >
+                    {r.name}
+                    <span className="ml-1 text-zinc-600">· {r.role}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[11px] leading-relaxed text-amber-300/80">
+                Provisional: room boundaries, areas, and per-room spatial refs
+                backfill from the APS Model Derivative (WS-1 Part A). Room inventory
+                is documented from the floor-plan set.
               </p>
-              <ConfidenceChip
-                state={toChipState(unit.confidence.state)}
-                value={unit.confidence.value}
-                title={unit.confidence.stateNote}
-              />
             </div>
-            <p className="mt-2 text-sm font-medium text-zinc-100">{unitPayload.name}</p>
-            <p className="text-xs text-zinc-500">{unitPayload.unitType}</p>
-            <ul className="mt-2 flex flex-wrap gap-1.5">
-              {rooms.map((r) => (
-                <li
-                  key={r.name}
-                  className="rounded border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[11px] text-zinc-300"
-                >
-                  {r.name}
-                  <span className="ml-1 text-zinc-600">· {r.role}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-2 text-[11px] leading-relaxed text-amber-300/80">
-              Provisional: room boundaries, areas, and per-room spatial refs
-              backfill from the APS Model Derivative (WS-1 Part A). Room inventory
-              is documented from the floor-plan set.
-            </p>
-          </div>
+          </AdaptiveReveal>
         </div>
 
         {/* RIGHT: the composed layers (operating + ground truth) */}
         <div className="space-y-4">
-          <OperatingLayer />
-          <GroundTruthLayer />
+          {/* Beat 4 — the operating layer (tenant-private; redacts for the LP) */}
+          <AdaptiveReveal key={`${replayKey}-operating`} index={beat++} step={0.14} variant="rise">
+            <RoleGate
+              resource="operating-internals"
+              redact
+              redactLabel="Operating layer (tenant-private)"
+            >
+              <OperatingLayer />
+            </RoleGate>
+          </AdaptiveReveal>
+
+          {/* Beat 5 — the ground-truth layer (visible to the LP too) */}
+          <AdaptiveReveal key={`${replayKey}-ground`} index={beat++} step={0.14} variant="rise">
+            <GroundTruthLayer />
+          </AdaptiveReveal>
         </div>
       </div>
     </section>

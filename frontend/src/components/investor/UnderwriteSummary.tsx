@@ -12,8 +12,10 @@
  * makes the representations; we provide the provenance infrastructure).
  */
 
+import type { ReactNode } from "react";
 import { ConfidenceChip } from "@/components/library";
 import { DrillLink } from "./AtomDrill";
+import { RedactableValue, RedactionMenu } from "./RedactionControls";
 import { toChipState } from "./engineClient";
 import type { EngineConfidence, KpiCardData, KpiMetric } from "./types";
 
@@ -26,6 +28,30 @@ function formatValue(m: KpiMetric): string {
   if (m.unit === "days") return `${m.value} d`;
   if (m.unit === "units") return `${m.value}`;
   return `${m.value} ${m.unit}`;
+}
+
+/**
+ * A clearly-representative replacement for a redacted/replaced operating figure —
+ * a rounded band around the real number, never a fabricated exact value. Used as
+ * the substitute the LP sees when the operator picks "replace".
+ */
+function representativeBand(m: KpiMetric): string {
+  if (m.value === null || m.value === undefined) return "—";
+  if (m.unit === "%") {
+    const lo = Math.floor(m.value / 2) * 2;
+    return `${lo}–${lo + 2}%`;
+  }
+  if (m.unit === "days") {
+    const lo = Math.floor(m.value / 5) * 5;
+    return `${lo}–${lo + 5} d`;
+  }
+  if (m.unit === "$/u/mo") {
+    const lo = Math.floor(m.value / 50) * 50;
+    return `~$${lo.toLocaleString()}`;
+  }
+  // Generic: round to a "~" approximation.
+  const rounded = Math.round(m.value / 10) * 10;
+  return `~${rounded}${m.unit ? ` ${m.unit}` : ""}`;
 }
 
 export function UnderwriteSummary({
@@ -80,6 +106,8 @@ export function UnderwriteSummary({
             note="Redevelopment listing (Aug 2024)"
             atomId="did:hauska:deal:nelray-607-611"
             drillLabel="deal atom"
+            fieldKey="kpi.listPrice"
+            replacement="~$4–5M"
           />
         )}
         {metrics.map((m) => (
@@ -90,6 +118,8 @@ export function UnderwriteSummary({
             note={m.note}
             atomId={PROFORMA_ATOM_ID}
             drillLabel="source"
+            fieldKey={`kpi.${m.key}`}
+            replacement={representativeBand(m)}
           />
         ))}
       </div>
@@ -109,17 +139,31 @@ function MetricCard({
   note,
   atomId,
   drillLabel,
+  fieldKey,
+  replacement,
 }: {
   label: string;
   value: string;
   note?: string;
   atomId: string;
   drillLabel: string;
+  /** Redaction field key — the operator can redact/replace this figure for the LP. */
+  fieldKey: string;
+  /** The clearly-representative substitute shown to the LP when replaced. */
+  replacement: ReactNode;
 }) {
   return (
     <div className="flex flex-col rounded-lg border border-zinc-800 bg-zinc-950/60 p-3">
       <div className="font-mono text-2xl font-medium tracking-tight text-zinc-100 tabular-nums">
-        {value}
+        <RedactableValue
+          fieldKey={fieldKey}
+          label={label}
+          replacement={
+            <span className="text-zinc-100">{replacement}</span>
+          }
+        >
+          {value}
+        </RedactableValue>
       </div>
       <div className="mt-1 text-xs font-medium text-zinc-300">{label}</div>
       {note && (
@@ -127,8 +171,9 @@ function MetricCard({
           {note}
         </div>
       )}
-      <div className="mt-2">
+      <div className="mt-2 flex items-center justify-between gap-2">
         <DrillLink atomId={atomId} label={drillLabel} />
+        <RedactionMenu fieldKey={fieldKey} label={label} />
       </div>
     </div>
   );
